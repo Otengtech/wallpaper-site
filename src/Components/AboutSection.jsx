@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { FaPaintBrush, FaBolt, FaGem, FaHeart } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const AboutSection = () => {
   const [ref, inView] = useInView({
@@ -99,7 +100,7 @@ const cardVariants = {
             art — explore wallpapers that redefine your screen’s look and feel.
           </motion.p>
 
-          <motion.button
+          <Link to="/about"
             variants={itemVariants}
             whileHover={{
               scale: 1.05,
@@ -108,7 +109,7 @@ const cardVariants = {
             className="bg-gradient-to-r from-cyan-500 to-blue-600 text-gray-900 px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300"
           >
             About Us
-          </motion.button>
+          </Link>
         </motion.div>
 
         {/* Right: Feature Cards */}
