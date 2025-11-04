@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaTwitter, FaInstagram, FaGithub, FaDribbble } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -116,15 +117,7 @@ const Footer = () => {
           <p>© {currentYear} WallHub. All rights reserved.</p>
 
           <div className="flex items-center">
-            Made with
-            <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
-              className="mx-1 text-red-500"
-            >
-              ♥
-            </motion.span>
-            for the community
+            Developed by Ebenezer Oteng
           </div>
         </motion.div>
       </div>
@@ -140,13 +133,13 @@ const Footer = () => {
           <h4 className="text-white font-semibold text-lg">
             Ready to find your next favorite wallpaper?
           </h4>
-          <motion.button
+          <Link to="/collections"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
           >
             Start Exploring
-          </motion.button>
+          </Link>
         </div>
       </motion.div>
     </footer>

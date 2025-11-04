@@ -6,36 +6,35 @@ import { Link } from "react-router-dom";
 
 const AboutSection = () => {
   const [ref, inView] = useInView({
-  threshold: 0.3,
-  triggerOnce: true,
-});
+    threshold: 0.3,
+    triggerOnce: true,
+  });
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15, duration: 0.4 },
-  },
-};
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, duration: 0.4 },
+    },
+  };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: "easeOut" },
-  },
-};
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4, ease: "easeOut" },
+    },
+  };
 
-const cardVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.3, ease: "easeOut" },
-  },
-};
-
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.3, ease: "easeOut" },
+    },
+  };
 
   const features = [
     {
@@ -86,30 +85,34 @@ const cardVariants = {
             variants={itemVariants}
             className="text-5xl md:text-6xl font-extrabold leading-tight"
           >
-            Why Choose{" "}<span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
+            Why Choose{" "}
+            <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
               WallHub?
             </span>
           </motion.h2>
 
           <motion.p
             variants={itemVariants}
-            className="text-gray-300 text-lg text-left leading-relaxed max-w-xl mx-auto lg:mx-0"
+            className="text-gray-300 text-md text-left leading-relaxed max-w-xl mx-auto lg:mx-0"
           >
             Discover a world of stunning visuals crafted to inspire and elevate
             your digital spaces. From breathtaking landscapes to modern digital
             art — explore wallpapers that redefine your screen’s look and feel.
           </motion.p>
 
-          <Link to="/about"
-            variants={itemVariants}
-            whileHover={{
-              scale: 1.05,
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-cyan-500 to-blue-600 text-gray-900 px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300"
-          >
-            About Us
-          </Link>
+          <div className="mt-4">
+            <Link
+              to="/about"
+              variants={itemVariants}
+              whileHover={{
+                scale: 1.05,
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 text-gray-900 px-6 mt-4 py-3 rounded-full font-semibold text-lg transition-all duration-300"
+            >
+              About Us
+            </Link>
+          </div>
         </motion.div>
 
         {/* Right: Feature Cards */}
@@ -127,9 +130,7 @@ const cardVariants = {
               className="bg-white/5 border border-white/10 cursor-pointer backdrop-blur-xl rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 text-center"
             >
               <div className="mb-3 flex justify-start">{feature.icon}</div>
-              <h1
-                className="text-left text-sky-500 text-xl mb-2"
-              >
+              <h1 className="text-left text-sky-500 text-xl mb-2">
                 {feature.title}
               </h1>
               <p className="text-gray-300 text-left text-sm leading-relaxed">

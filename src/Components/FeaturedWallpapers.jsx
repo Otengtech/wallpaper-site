@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import {Link} from "react-router-dom";
 
 const FeaturedWallpapers = () => {
   const [ref, inView] = useInView({
@@ -50,24 +51,6 @@ const FeaturedWallpapers = () => {
       image:
         "https://images.unsplash.com/photo-1579546929662-711aa81148cf?auto=format&fit=crop&w=1000&q=80",
       downloads: "9.3K",
-      resolution: "4K",
-    },
-    {
-      id: 5,
-      title: "Deep Space",
-      category: "space",
-      image:
-        "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1000&q=80",
-      downloads: "11.8K",
-      resolution: "8K",
-    },
-    {
-      id: 6,
-      title: "Minimal Geometry",
-      category: "minimal",
-      image:
-        "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?auto=format&fit=crop&w=1000&q=80",
-      downloads: "7.6K",
       resolution: "4K",
     },
   ];
@@ -208,9 +191,17 @@ const FeaturedWallpapers = () => {
                     {wallpaper.category}
                   </span>
                   <span className="text-cyan-400 flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd"/>
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      <path
+                        fillRule="evenodd"
+                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     {wallpaper.downloads}
                   </span>
@@ -218,6 +209,15 @@ const FeaturedWallpapers = () => {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-6 md:text-center text-left">
+          <Link
+            to="/collections"
+            className="bg-gradient-to-r from-cyan-500 to-blue-600 text-gray-900 px-6 mt-4 py-3 rounded-full font-semibold text-lg transition-all duration-300"
+          >
+            Browse Wallpapers
+          </Link>
         </div>
 
         {/* Mobile Slider */}

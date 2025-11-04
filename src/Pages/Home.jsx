@@ -3,6 +3,7 @@ import HeroSection from '../Components/HeroSection.jsx';
 import AboutSection from '../Components/AboutSection.jsx';
 import FeaturedWallpapers from '../Components/FeaturedWallpapers.jsx';
 import HowItWorks from '../Components/HowItWorks.jsx';
+import Reviews from '../Components/Reviews.jsx';
 const Home = () => {
   return (
     <div>
@@ -10,6 +11,7 @@ const Home = () => {
       <AboutSection />
       <FeaturedWallpapers />
       <HowItWorks />
+      <Reviews />
     </div>
   );
 }
