@@ -39,12 +39,12 @@ const HeroSectionGrid = () => {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2">
+            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-2 px-4">
               <button className="px-6 sm:px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-gray-900 rounded-full font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105">
                 Explore Collection
               </button>
               <button className="px-6 sm:px-8 py-3 bg-white/10 backdrop-blur-md text-white rounded-full font-semibold border border-white/20 hover:bg-white/20 transition-all duration-300">
-                Upload Wallpaper
+                Popular Wallpaper
               </button>
             </div>
 

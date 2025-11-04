@@ -5,7 +5,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Scroll detection for large screens only
+  // Scroll effect only for md+ screens
   useEffect(() => {
     const handleScroll = () => {
       if (window.innerWidth >= 768) {
@@ -27,13 +27,11 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
-        ${
-          isScrolled
-            ? "md:bg-white/10 md:backdrop-blur-2xl md:border-b md:border-white/10 md:shadow-lg"
-            : "md:bg-transparent"
-        } 
-        bg-gray-900/90 backdrop-blur-xl md:backdrop-blur-none`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "md:bg-white/10 md:backdrop-blur-2xl md:border-b md:border-white/10 md:shadow-lg"
+          : "md:bg-transparent"
+      } bg-gray-900/90 backdrop-blur-md md:backdrop-blur-none`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
@@ -88,7 +86,7 @@ const Navbar = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 80, damping: 20 }}
-            className="fixed inset-0 bg-gradient-to-br from-gray-900/95 to-gray-800/90 backdrop-blur-2xl z-50 flex flex-col justify-center items-center space-y-8 text-white md:hidden"
+            className="fixed inset-0 bg-gray-900/95 backdrop-blur-2xl z-[60] flex flex-col justify-center items-center space-y-8 text-white md:hidden"
           >
             {/* Close Button */}
             <button
@@ -138,10 +136,10 @@ const Navbar = () => {
               ))}
             </motion.div>
 
-            {/* Subtle Glow / Glass Effect */}
-            <div className="absolute inset-0 -z-10">
-              <div className="absolute top-20 left-10 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
-              <div className="absolute bottom-20 right-10 w-56 h-56 bg-purple-600/20 rounded-full blur-3xl" />
+            {/* Subtle Glow Background */}
+            <div className="absolute inset-0 -z-10 overflow-hidden">
+              <div className="absolute top-24 left-12 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
+              <div className="absolute bottom-24 right-12 w-56 h-56 bg-purple-600/20 rounded-full blur-3xl" />
             </div>
           </motion.div>
         )}
