@@ -18,6 +18,7 @@ const Footer = () => {
     { name: "Categories", href: "/category" },
     { name: "Collections", href: "/collections" },
     { name: "Popular", href: "/popular" },
+    { name: "Mobile View", href: "/mobile" },
     { name: "Policy", href: "/policy" },
   ];
 

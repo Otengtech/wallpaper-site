@@ -211,7 +211,7 @@ const FeaturedWallpapers = () => {
           ))}
         </div>
 
-        <div className="mt-6 md:text-center text-left">
+        <div className="mt-6 md:text-center hidden md:block text-left">
           <Link
             to="/collections"
             className="bg-gradient-to-r from-cyan-500 to-blue-600 text-gray-900 px-6 mt-4 py-3 rounded-full font-semibold text-lg transition-all duration-300"
@@ -263,6 +263,15 @@ const FeaturedWallpapers = () => {
               </div>
             ))}
           </motion.div>
+
+          <div className="mt-6 md:text-center block md:hidden text-left">
+          <Link
+            to="/collections"
+            className="bg-gradient-to-r from-cyan-500 to-blue-600 text-gray-900 px-6 mt-4 py-3 rounded-full font-semibold text-lg transition-all duration-300"
+          >
+            Browse Wallpapers
+          </Link>
+        </div>
         </div>
 
         {/* Modal Viewer */}

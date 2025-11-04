@@ -8,6 +8,7 @@ import Category from "./Pages/Categories";
 import Popular from "./Pages/Popular";
 import Collections from "./Pages/Collections";
 import About from "./Pages/About";
+import MobileView from "./Pages/MobileView";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/category" element={<Category />} />
           <Route path="/popular" element={<Popular />} />
           <Route path="/collections" element={<Collections />} />
+          <Route path="/mobile" element={<MobileView />} />
           <Route path="/about" element={<About />} />
           <Route
             path="*"
