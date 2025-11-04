@@ -1,130 +1,136 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Handle scroll effect
+  // Scroll detection for background blur
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navItems = [
-    { name: 'Home', href: '#home' },
-    { name: 'Categories', href: '#categories' },
-    { name: 'Popular', href: '#popular' },
-    { name: 'Collections', href: '#collections' },
-    { name: 'Upload', href: '#upload' },
+    { name: "Home", href: "#home" },
+    { name: "Categories", href: "#categories" },
+    { name: "Popular", href: "#popular" },
+    { name: "Collections", href: "#collections" },
+    { name: "About", href: "#about" },
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-white/10 backdrop-blur-xl border-b border-white/20 shadow-xl' 
-        : 'bg-transparent'
-    }`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/10 backdrop-blur-2xl border-b border-white/10 shadow-lg"
+          : "bg-transparent"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-            <div className="text-2xl font-bold text-white">
-              <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-                WallHub
-              </span>
-            </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
+              WallHub
+            </span>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-white/80 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-white/10 backdrop-blur-sm"
-                >
-                  {item.name}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <button className="text-white/80 hover:text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-300">
-              Sign In
-            </button>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-2 rounded-full text-sm font-medium hover:shadow-lg hover:scale-105 transition-all duration-300">
-              Sign Up
-            </button>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="bg-white/10 backdrop-blur-sm text-white p-2 rounded-md border border-white/20 hover:bg-white/20 transition-all duration-300"
-            >
-              <svg
-                className="h-6 w-6"
-                stroke="currentColor"
-                fill="none"
-                viewBox="0 0 24 24"
+          <div className="hidden md:flex items-center space-x-8">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="text-white/80 hover:text-white text-sm font-medium px-3 py-2 rounded-md transition-all duration-300 hover:bg-white/10 backdrop-blur-sm"
               >
-                {isMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                )}
-              </svg>
-            </button>
+                {item.name}
+              </a>
+            ))}
           </div>
-        </div>
 
-        {/* Mobile Navigation Menu */}
-        <div className={`md:hidden transition-all duration-300 overflow-hidden ${
-          isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}>
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 mb-4">
-            <div className="flex flex-col space-y-3">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-white/80 hover:text-white px-4 py-3 rounded-lg text-base font-medium hover:bg-white/10 transition-all duration-300"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
-              ))}
-              
-              {/* Mobile Auth Buttons */}
-              <div className="border-t border-white/20 pt-4 mt-2 flex flex-col space-y-3">
-                <button className="text-white/80 hover:text-white px-4 py-3 rounded-lg text-base font-medium hover:bg-white/10 transition-all duration-300 text-left">
-                  Sign In
-                </button>
-                <button className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-4 py-3 rounded-lg text-base font-medium hover:shadow-lg transition-all duration-300 text-center">
-                  Sign Up
-                </button>
-              </div>
-            </div>
-          </div>
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="md:hidden bg-white/10 backdrop-blur-lg text-white p-2 rounded-md border border-white/20 hover:bg-white/20 transition-all duration-300"
+          >
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 80, damping: 20 }}
+            className="fixed inset-0 bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-2xl z-50 flex flex-col justify-center items-center space-y-8 text-white"
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="absolute top-6 right-6 text-white/80 hover:text-white transition-all"
+            >
+              <svg
+                className="h-8 w-8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Animated Nav Links */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.1 } },
+              }}
+              className="flex flex-col items-center space-y-6"
+            >
+              {navItems.map((item, i) => (
+                <motion.a
+                  key={item.name}
+                  href={item.href}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  transition={{ duration: 0.5 }}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-2xl font-semibold text-white hover:text-cyan-400 transition-all"
+                >
+                  {item.name}
+                </motion.a>
+              ))}
+            </motion.div>
+
+            {/* Subtle Glow / Glass Effect */}
+            <div className="absolute inset-0 -z-10">
+              <div className="absolute top-20 left-10 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl" />
+              <div className="absolute bottom-20 right-10 w-56 h-56 bg-purple-600/20 rounded-full blur-3xl" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
