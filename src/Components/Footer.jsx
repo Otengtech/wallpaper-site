@@ -14,11 +14,11 @@ const Footer = () => {
   ];
 
   const quickLinks = [
-    { name: "About Us", href: "#about" },
-    { name: "Categories", href: "#categories" },
-    { name: "Collections", href: "#collections" },
-    { name: "Popular", href: "#popular" },
-    { name: "Policy", href: "#policy" },
+    { name: "About Us", href: "/about" },
+    { name: "Categories", href: "/category" },
+    { name: "Collections", href: "/collections" },
+    { name: "Popular", href: "/popular" },
+    { name: "Policy", href: "/policy" },
   ];
 
   const stats = [

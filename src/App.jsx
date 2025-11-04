@@ -4,7 +4,7 @@ import "./App.css";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./Pages/Home";
-import Categories from "./Pages/Categories";
+import Category from "./Pages/Categories";
 import Popular from "./Pages/Popular";
 import Collections from "./Pages/Collections";
 import About from "./Pages/About";
@@ -16,7 +16,7 @@ function App() {
       <main className="pt-16"> {/* Padding so content isn’t hidden behind navbar */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/categories" element={<Categories />} />
+          <Route path="/category" element={<Category />} />
           <Route path="/popular" element={<Popular />} />
           <Route path="/collections" element={<Collections />} />
           <Route path="/about" element={<About />} />
