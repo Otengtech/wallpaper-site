@@ -5,11 +5,14 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Scroll detection for background blur
+  // Scroll detection for large screens only
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (window.innerWidth >= 768) {
+        setIsScrolled(window.scrollY > 50);
+      }
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -24,11 +27,13 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/10 backdrop-blur-2xl border-b border-white/10 shadow-lg"
-          : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
+        ${
+          isScrolled
+            ? "md:bg-white/10 md:backdrop-blur-2xl md:border-b md:border-white/10 md:shadow-lg"
+            : "md:bg-transparent"
+        } 
+        bg-gray-900/90 backdrop-blur-xl md:backdrop-blur-none`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
@@ -55,6 +60,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(true)}
+            aria-label="Open menu"
             className="md:hidden bg-white/10 backdrop-blur-lg text-white p-2 rounded-md border border-white/20 hover:bg-white/20 transition-all duration-300"
           >
             <svg
@@ -64,7 +70,11 @@ const Navbar = () => {
               strokeWidth={2}
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
         </div>
@@ -78,11 +88,12 @@ const Navbar = () => {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 80, damping: 20 }}
-            className="fixed inset-0 bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-2xl z-50 flex flex-col justify-center items-center space-y-8 text-white"
+            className="fixed inset-0 bg-gradient-to-br from-gray-900/95 to-gray-800/90 backdrop-blur-2xl z-50 flex flex-col justify-center items-center space-y-8 text-white md:hidden"
           >
             {/* Close Button */}
             <button
               onClick={() => setIsMenuOpen(false)}
+              aria-label="Close menu"
               className="absolute top-6 right-6 text-white/80 hover:text-white transition-all"
             >
               <svg
@@ -92,7 +103,11 @@ const Navbar = () => {
                 strokeWidth={2}
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
 
@@ -108,13 +123,13 @@ const Navbar = () => {
             >
               {navItems.map((item, i) => (
                 <motion.a
-                  key={item.name}
+                  key={i}
                   href={item.href}
                   variants={{
                     hidden: { opacity: 0, y: 30 },
                     visible: { opacity: 1, y: 0 },
                   }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.4 }}
                   onClick={() => setIsMenuOpen(false)}
                   className="text-2xl font-semibold text-white hover:text-cyan-400 transition-all"
                 >
