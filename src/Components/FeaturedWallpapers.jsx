@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const FeaturedWallpapers = () => {
   const [ref, inView] = useInView({
@@ -263,15 +263,14 @@ const FeaturedWallpapers = () => {
               </div>
             ))}
           </motion.div>
-
-          <div className="mt-6 md:text-center block md:hidden text-left">
+        </div>
+        <div className="mt-6 md:text-center block md:hidden text-left">
           <Link
             to="/collections"
             className="bg-gradient-to-r from-cyan-500 to-blue-600 text-gray-900 px-6 mt-4 py-3 rounded-full font-semibold text-lg transition-all duration-300"
           >
             Browse Wallpapers
           </Link>
-        </div>
         </div>
 
         {/* Modal Viewer */}

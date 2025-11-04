@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
+import { FaPalette } from "react-icons/fa";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,6 +29,7 @@ const Navbar = () => {
     { name: "Home", href: "/" },
     { name: "Categories", href: "/category" },
     { name: "Popular", href: "/popular" },
+    { name: "Desktop View", href: "/collections" },
     { name: "Moblie View", href: "/mobile" },
     { name: "About", href: "/about" },
   ];
@@ -49,7 +51,10 @@ const Navbar = () => {
               to="/"
               className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600"
             >
-              WallHub
+              <h4 className="flex items-center gap-2 text-2xl font-bold text-cyan-400">
+                <FaPalette className="text-cyan-400" />
+                WallHub
+              </h4>
             </Link>
 
             {/* Desktop Navigation */}

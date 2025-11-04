@@ -170,7 +170,7 @@ const AboutUs = () => {
                 WallHub
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-md text-left md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               We're passionate about bringing stunning visuals to your devices. 
               Our mission is to make every screen beautiful, one wallpaper at a time.
             </p>

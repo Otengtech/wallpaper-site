@@ -9,11 +9,13 @@ import Popular from "./Pages/Popular";
 import Collections from "./Pages/Collections";
 import About from "./Pages/About";
 import MobileView from "./Pages/MobileView";
+import ScrollToTop from "./Components/ScrollToTop";
 
 function App() {
   return (
     <Router>
       <Navbar />
+      <ScrollToTop />
       <main className="pt-16"> {/* Padding so content isn’t hidden behind navbar */}
         <Routes>
           <Route path="/" element={<Home />} />

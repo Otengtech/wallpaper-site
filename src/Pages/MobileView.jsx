@@ -45,6 +45,7 @@ const WallpapersSection = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedWallpaper, setSelectedWallpaper] = useState(null); // modal state
 
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
@@ -212,14 +213,12 @@ const WallpapersSection = () => {
                       {wall.alt_description || "Untitled"}
                     </h4>
                     <div className="flex gap-1 mt-1">
-                      <a
-                        href={wall.links.html}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => setSelectedWallpaper(wall)}
                         className="bg-white text-black px-2 py-1 rounded-full text-xs hover:bg-gray-200 transition"
                       >
                         View
-                      </a>
+                      </button>
                       <button
                         onClick={() => handleDownload(wall.urls.full, wall.id + ".jpg")}
                         className="bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold hover:bg-purple-700 transition flex items-center gap-1"
@@ -294,6 +293,35 @@ const WallpapersSection = () => {
                 </motion.button>
               ))}
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Wallpaper Modal */}
+      <AnimatePresence>
+        {selectedWallpaper && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 h-[100vh] flex items-center justify-center bg-black/90 backdrop-blur-lg p-0 md:p-10"
+            onClick={() => setSelectedWallpaper(null)}
+          >
+            <motion.img
+              src={selectedWallpaper.urls.regular}
+              alt={selectedWallpaper.alt_description || "Wallpaper"}
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="w-full top-0 h-full left-0 md:h-auto md:max-w-4xl object-contain cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setSelectedWallpaper(null)}
+              className="absolute top-5 right-5 md:top-10 md:right-10 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full"
+            >
+              <FaTimes size={26} />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
