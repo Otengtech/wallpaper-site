@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaLeaf,
@@ -20,9 +20,9 @@ import {
   FaTimes,
   FaDownload,
 } from "react-icons/fa";
+import AdBanner from "../Components/AdBanner";
 
 const iconMap = {
-  all: <FaTachometerAlt />,
   nature: <FaLeaf />,
   abstract: <FaPalette />,
   minimal: <FaThLarge />,
@@ -37,12 +37,22 @@ const iconMap = {
   light: <FaSun />,
   texture: <FaGripHorizontal />,
   vintage: <FaCameraRetro />,
+  all: <FaTachometerAlt />,
 };
 
-const Collections = () => {
+const queryMap = {
+  all: "wallpapers",
+  phone: "phone wallpaper vertical",
+  desktop: "4k desktop wallpaper",
+  dark: "dark aesthetic wallpaper",
+  light: "bright minimal wallpaper",
+  texture: "texture pattern wallpaper",
+  vintage: "vintage retro wallpaper",
+};
+
+const CollectionsSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1);
   const [wallpapers, setWallpapers] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -65,86 +75,57 @@ const Collections = () => {
     { id: "vintage", name: "Vintage" },
   ];
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.innerHTML = `
-     atOptions = {
-       'key' : '6676d68ba7d23941b9617404b8afd159',
-       'format' : 'iframe',
-       'height' : 250,
-       'width' : 300,
-       'params' : {}
-     };
-   `;
-    document.getElementById("ad-container-300x250").appendChild(script);
+  const [selectedWallpaper, setSelectedWallpaper] = useState(null); // modal state
 
-    const script2 = document.createElement("script");
-    script2.src =
-      "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
-    script2.async = true;
-    document.getElementById("ad-container-300x250").appendChild(script2);
-  }, []);
-
-  // Fetch Wallpapers
-  const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
+  // ✅ Fetch Wallpapers
+  const fetchWallpapers = async (category) => {
     try {
       setIsLoading(true);
+
+      const query = queryMap[category] || category;
+
       const res = await fetch(
-        `https://api.unsplash.com/search/photos?query=${category}&page=${pageNum}&per_page=12&client_id=${accessKey}`
+        `https://api.unsplash.com/photos/random?query=${query}&count=12&client_id=${accessKey}`
       );
       const data = await res.json();
-      setWallpapers(data.results || []);
+      setWallpapers(Array.isArray(data) ? data : []);
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
-      console.error("Error fetching wallpapers:", err);
+      console.error("Fetch Error:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ✅ FIX: Fetch when category changes
   useEffect(() => {
-    setPage(1);
-    fetchWallpapers(
-      selectedCategory === "all" ? "wallpapers" : selectedCategory
-    );
+    fetchWallpapers(selectedCategory);
   }, [selectedCategory]);
 
-  const handleNext = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchWallpapers(
-      selectedCategory === "all" ? "wallpapers" : selectedCategory,
-      nextPage
-    );
-  };
+  // ✅ Download Handler
+  const handleDownload = async (url, filename) => {
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
 
-  const handlePrevious = () => {
-    if (page <= 1) return;
-    const prevPage = page - 1;
-    setPage(prevPage);
-    fetchWallpapers(
-      selectedCategory === "all" ? "wallpapers" : selectedCategory,
-      prevPage
-    );
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename || "wallpaper.jpg";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Download failed:", err);
+    }
   };
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.4 } },
-    hover: { scale: 1.05, y: -6 },
-  };
-
-  const handleDownload = async (url, filename) => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = filename || "wallpaper.jpg";
-      link.click();
-    } catch (err) {
-      console.error("Download failed:", err);
-    }
+    hover: { scale: 1.04, y: -6 },
   };
 
   return (
@@ -154,71 +135,49 @@ const Collections = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-3">
+          <h2 className="text-4xl md:text-5xl font-bold mb-3 text-center">
             Explore Stunning{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">
               Collections
             </span>
           </h2>
-          <p className="text-gray-400 text-left max-w-2xl mx-auto">
-            Browse high-quality wallpapers curated from Unsplash — organized by
-            category.
-          </p>
         </motion.div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Button */}
         <div className="lg:hidden mb-6">
-          <motion.button
-            whileTap={{ scale: 0.97 }}
+          <button
             onClick={() => setIsMenuOpen(true)}
-            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 text-white py-3 rounded-xl flex items-center justify-center gap-3 hover:bg-white/20 transition"
+            className="w-full bg-white/10 border border-white/20 text-white py-3 rounded-xl flex items-center justify-center gap-3"
           >
-            <FaBars size={18} />
-            <span className="font-medium">Browse Categories</span>
-          </motion.button>
+            <FaBars size={18} /> Browse Categories
+          </button>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 relative">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <motion.aside
-            initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            className="hidden lg:block w-72 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6"
-          >
-            <h3 className="text-lg font-semibold mb-4">Categories</h3>
-            <div className="space-y-2">
-              {categories.map((cat) => (
-                <motion.button
-                  key={cat.id}
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
-                    selectedCategory === cat.id
-                      ? "bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-400/40 text-white"
-                      : "bg-transparent border-transparent text-gray-300 hover:bg-white/10"
-                  }`}
-                >
-                  <span className="text-xl">{iconMap[cat.id]}</span>
-                  <span className="font-medium">{cat.name}</span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.aside>
+          <aside className="hidden lg:block w-72 bg-white/5 border border-white/10 rounded-2xl p-6">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`w-full flex items-center gap-3 my-2 p-3 rounded-xl transition-all ${
+                  selectedCategory === cat.id
+                    ? "bg-purple-600/30 border border-purple-400/40"
+                    : "text-gray-300 hover:bg-white/10"
+                }`}
+              >
+                <span className="text-xl">{iconMap[cat.id]}</span>
+                {cat.name}
+              </button>
+            ))}
+          </aside>
 
-          {/* Wallpapers */}
+          {/* Wallpapers Grid */}
           <div className="flex-1">
             {isLoading ? (
               <div className="flex justify-center py-20">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                  className="w-14 h-14 border-4 border-purple-500 border-t-transparent rounded-full"
-                />
+                <div className="w-14 h-14 border-4 border-purple-500 border-t-transparent animate-spin rounded-full" />
               </div>
             ) : (
               <>
@@ -233,63 +192,50 @@ const Collections = () => {
                       initial="hidden"
                       animate="visible"
                       whileHover="hover"
-                      className="group relative overflow-hidden rounded-2xl border border-white/10 backdrop-blur-xl hover:border-purple-400/40 transition-all"
+                      className="group relative rounded-2xl overflow-hidden border border-white/10"
                     >
                       <img
                         src={wall.urls.small}
-                        alt={wall.alt_description || "Wallpaper"}
-                        className="w-full h-64 object-cover rounded-2xl group-hover:opacity-90 transition"
+                        alt=""
+                        className="w-full h-64 object-cover"
                       />
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition p-4 flex flex-col justify-end">
-                        <h4 className="text-sm font-semibold line-clamp-1">
-                          {wall.alt_description || "Untitled"}
-                        </h4>
-
-                        <div className="flex gap-2 mt-2">
-                          <a
-                            href={wall.links.html}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition"
-                          >
-                            View
-                          </a>
-
-                          <button
-                            onClick={() =>
-                              handleDownload(wall.urls.full, wall.id + ".jpg")
-                            }
-                            className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm flex items-center gap-2 hover:bg-purple-700 transition"
-                          >
-                            <FaDownload size={14} />
-                          </button>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-4">
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition duration-300 p-2 flex flex-col justify-end">
+                          <h4 className="text-xs font-semibold line-clamp-1">
+                            {wall.alt_description || "Untitled"}
+                          </h4>
+                          <div className="flex gap-1 mt-1">
+                            <button
+                              onClick={() => setSelectedWallpaper(wall)}
+                              className="bg-white text-black px-2 py-1 rounded-full text-xs hover:bg-gray-200 transition"
+                            >
+                              View
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDownload(wall.urls.full, wall.id + ".jpg")
+                              }
+                              className="bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold hover:bg-purple-700 transition flex items-center gap-1"
+                            >
+                              <FaDownload size={12} />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </motion.div>
                   ))}
                 </motion.div>
 
-                <div className="my-6 flex justify-center">
-                  <div id="ad-container-300x250"></div>
-                </div>
+               
 
-                {/* Pagination */}
-                <div className="flex justify-center gap-4 mt-10">
+                {/* Refresh */}
+                <div className="flex justify-center mt-10">
                   <button
-                    onClick={handlePrevious}
-                    disabled={page === 1}
-                    className={`px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition ${
-                      page === 1 ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
+                    onClick={() => fetchWallpapers(selectedCategory)}
+                    className="px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white"
                   >
-                    Previous Images
-                  </button>
-                  <button
-                    onClick={handleNext}
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition"
-                  >
-                    Show More Images
+                    Fetch New Random Images
                   </button>
                 </div>
               </>
@@ -305,40 +251,55 @@ const Collections = () => {
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-3xl border-r border-white/10 p-6 flex flex-col"
+            className="fixed inset-0 bg-black/90 p-6 z-50"
           >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-white">Categories</h3>
-              <button
-                onClick={() => setIsMenuOpen(false)}
-                className="text-white/80 hover:text-white p-2 rounded-lg"
-              >
+            <div className="flex justify-between mb-6">
+              <h3 className="text-xl font-bold">Categories</h3>
+              <button onClick={() => setIsMenuOpen(false)}>
                 <FaTimes size={20} />
               </button>
             </div>
 
-            <div className="space-y-3 overflow-y-auto">
-              {categories.map((cat) => (
-                <motion.button
-                  key={cat.id}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => {
-                    setSelectedCategory(cat.id);
-                    setIsMenuOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-3 p-4 rounded-xl transition-all ${
-                    selectedCategory === cat.id
-                      ? "bg-purple-600/30 text-white border border-purple-500/40"
-                      : "bg-transparent text-gray-300 hover:bg-white/10"
-                  }`}
-                >
-                  <span className="text-xl">{iconMap[cat.id]}</span>
-                  <span>{cat.name}</span>
-                </motion.button>
-              ))}
-            </div>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setSelectedCategory(cat.id);
+                  setIsMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-3 p-4 rounded-xl text-gray-300 hover:bg-white/10"
+              >
+                {iconMap[cat.id]} {cat.name}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* Wallpaper Modal */}
+      <AnimatePresence>
+        {selectedWallpaper && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 h-[100vh] flex items-center justify-center bg-black/90 backdrop-blur-lg p-0 md:p-10"
+            onClick={() => setSelectedWallpaper(null)}
+          >
+            <motion.img
+              src={selectedWallpaper.urls.regular}
+              alt={selectedWallpaper.alt_description || "Wallpaper"}
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="w-full top-0 h-full left-0 md:h-auto md:max-w-4xl object-contain cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setSelectedWallpaper(null)}
+              className="absolute top-5 right-5 md:top-10 md:right-10 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full"
+            >
+              <FaTimes size={26} />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -346,4 +307,4 @@ const Collections = () => {
   );
 };
 
-export default Collections;
+export default CollectionsSection;
