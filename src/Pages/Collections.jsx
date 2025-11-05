@@ -48,8 +48,6 @@ const Collections = () => {
 
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
-  const adRef = useRef(null); // ✅ Fix: Ref for Ad
-
   const categories = [
     { id: "all", name: "All Wallpapers" },
     { id: "nature", name: "Nature" },
