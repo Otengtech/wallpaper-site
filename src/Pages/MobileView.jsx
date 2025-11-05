@@ -67,6 +67,26 @@ const WallpapersSection = () => {
     { id: "vintage", name: "Vintage" },
   ];
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.innerHTML = `
+    atOptions = {
+      'key' : '6676d68ba7d23941b9617404b8afd159',
+      'format' : 'iframe',
+      'height' : 250,
+      'width' : 300,
+      'params' : {}
+    };
+  `;
+    document.getElementById("ad-container-300x250").appendChild(script);
+
+    const script2 = document.createElement("script");
+    script2.src =
+      "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+    script2.async = true;
+    document.getElementById("ad-container-300x250").appendChild(script2);
+  }, []);
+
   const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
     try {
       setIsLoading(true);
@@ -85,20 +105,30 @@ const WallpapersSection = () => {
 
   useEffect(() => {
     setPage(1);
-    fetchWallpapers(selectedCategory === "all" ? "wallpapers" : selectedCategory);
+    fetchWallpapers(
+      selectedCategory === "all" ? "wallpapers" : selectedCategory
+    );
   }, [selectedCategory]);
 
   const handleNext = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchWallpapers(selectedCategory === "all" ? "wallpapers" : selectedCategory, nextPage);
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
+    fetchWallpapers(
+      selectedCategory === "all" ? "wallpapers" : selectedCategory,
+      nextPage
+    );
   };
 
   const handlePrevious = () => {
     if (page > 1) {
       const prevPage = page - 1;
       setPage(prevPage);
-      fetchWallpapers(selectedCategory === "all" ? "wallpapers" : selectedCategory, prevPage);
+      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
+      fetchWallpapers(
+        selectedCategory === "all" ? "wallpapers" : selectedCategory,
+        prevPage
+      );
     }
   };
 
@@ -142,7 +172,9 @@ const WallpapersSection = () => {
                   : "bg-transparent text-gray-300 hover:bg-white/10"
               }`}
             >
-              <span className="text-xl">{iconMap[cat.id] || <FaPalette />}</span>
+              <span className="text-xl">
+                {iconMap[cat.id] || <FaPalette />}
+              </span>
               <span>{cat.name}</span>
             </button>
           ))}
@@ -189,7 +221,10 @@ const WallpapersSection = () => {
               />
             </div>
           ) : (
-            <motion.div layout className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <motion.div
+              layout
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+            >
               {wallpapers.map((wall) => (
                 <motion.div
                   key={wall.id}
@@ -220,7 +255,9 @@ const WallpapersSection = () => {
                         View
                       </button>
                       <button
-                        onClick={() => handleDownload(wall.urls.full, wall.id + ".jpg")}
+                        onClick={() =>
+                          handleDownload(wall.urls.full, wall.id + ".jpg")
+                        }
                         className="bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold hover:bg-purple-700 transition flex items-center gap-1"
                       >
                         <FaDownload size={12} />
@@ -231,6 +268,10 @@ const WallpapersSection = () => {
               ))}
             </motion.div>
           )}
+
+          <div className="my-6 flex justify-center">
+            <div id="ad-container-300x250"></div>
+          </div>
 
           {/* Pagination */}
           <div className="flex justify-between mt-6">
@@ -288,7 +329,9 @@ const WallpapersSection = () => {
                       : "bg-transparent text-gray-300 hover:bg-white/10"
                   }`}
                 >
-                  <span className="text-xl">{iconMap[cat.id] || <FaPalette />}</span>
+                  <span className="text-xl">
+                    {iconMap[cat.id] || <FaPalette />}
+                  </span>
                   <span>{cat.name}</span>
                 </motion.button>
               ))}

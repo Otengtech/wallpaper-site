@@ -65,6 +65,26 @@ const CollectionsSection = () => {
     { id: "vintage", name: "Vintage" },
   ];
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.innerHTML = `
+    atOptions = {
+      'key' : '6676d68ba7d23941b9617404b8afd159',
+      'format' : 'iframe',
+      'height' : 250,
+      'width' : 300,
+      'params' : {}
+    };
+  `;
+    document.getElementById("ad-container-300x250").appendChild(script);
+
+    const script2 = document.createElement("script");
+    script2.src =
+      "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+    script2.async = true;
+    document.getElementById("ad-container-300x250").appendChild(script2);
+  }, []);
+
   // Fetch wallpapers dynamically from Unsplash
   const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
     try {
@@ -93,6 +113,7 @@ const CollectionsSection = () => {
   const handleNext = () => {
     const nextPage = page + 1;
     setPage(nextPage);
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
     fetchWallpapers(
       selectedCategory === "all" ? "wallpapers" : selectedCategory,
       nextPage
@@ -103,6 +124,7 @@ const CollectionsSection = () => {
     if (page > 1) {
       const prevPage = page - 1;
       setPage(prevPage);
+      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
       fetchWallpapers(
         selectedCategory === "all" ? "wallpapers" : selectedCategory,
         prevPage
@@ -259,6 +281,9 @@ const CollectionsSection = () => {
                     </motion.div>
                   ))}
                 </motion.div>
+                <div className="my-6 flex justify-center">
+                  <div id="ad-container-300x250"></div>
+                </div>
 
                 {/* Pagination Controls */}
                 <div className="flex justify-center gap-4 mt-10">
