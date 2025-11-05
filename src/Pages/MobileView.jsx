@@ -355,7 +355,7 @@ const WallpapersSection = () => {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="w-full top-0 h-full left-0 md:h-auto md:max-w-4xl object-contain cursor-pointer"
+              className="w-full top-0 h-[100vh] left-0 md:h-auto md:max-w-4xl object-contain cursor-pointer"
               onClick={(e) => e.stopPropagation()}
             />
             <button
