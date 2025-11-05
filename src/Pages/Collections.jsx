@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaLeaf,
@@ -22,6 +22,7 @@ import {
 } from "react-icons/fa";
 
 const iconMap = {
+  all: <FaTachometerAlt />,
   nature: <FaLeaf />,
   abstract: <FaPalette />,
   minimal: <FaThLarge />,
@@ -36,10 +37,9 @@ const iconMap = {
   light: <FaSun />,
   texture: <FaGripHorizontal />,
   vintage: <FaCameraRetro />,
-  all: <FaTachometerAlt />,
 };
 
-const CollectionsSection = () => {
+const Collections = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -47,6 +47,8 @@ const CollectionsSection = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
+
+  const adRef = useRef(null); // ✅ Fix: Ref for Ad
 
   const categories = [
     { id: "all", name: "All Wallpapers" },
@@ -68,14 +70,14 @@ const CollectionsSection = () => {
   useEffect(() => {
     const script = document.createElement("script");
     script.innerHTML = `
-    atOptions = {
-      'key' : '6676d68ba7d23941b9617404b8afd159',
-      'format' : 'iframe',
-      'height' : 250,
-      'width' : 300,
-      'params' : {}
-    };
-  `;
+     atOptions = {
+       'key' : '6676d68ba7d23941b9617404b8afd159',
+       'format' : 'iframe',
+       'height' : 250,
+       'width' : 300,
+       'params' : {}
+     };
+   `;
     document.getElementById("ad-container-300x250").appendChild(script);
 
     const script2 = document.createElement("script");
@@ -85,7 +87,7 @@ const CollectionsSection = () => {
     document.getElementById("ad-container-300x250").appendChild(script2);
   }, []);
 
-  // Fetch wallpapers dynamically from Unsplash
+  // Fetch Wallpapers
   const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
     try {
       setIsLoading(true);
@@ -94,7 +96,7 @@ const CollectionsSection = () => {
       );
       const data = await res.json();
       setWallpapers(data.results || []);
-      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error("Error fetching wallpapers:", err);
     } finally {
@@ -109,11 +111,9 @@ const CollectionsSection = () => {
     );
   }, [selectedCategory]);
 
-  // Load next or previous pages
   const handleNext = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
     fetchWallpapers(
       selectedCategory === "all" ? "wallpapers" : selectedCategory,
       nextPage
@@ -121,15 +121,13 @@ const CollectionsSection = () => {
   };
 
   const handlePrevious = () => {
-    if (page > 1) {
-      const prevPage = page - 1;
-      setPage(prevPage);
-      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
-      fetchWallpapers(
-        selectedCategory === "all" ? "wallpapers" : selectedCategory,
-        prevPage
-      );
-    }
+    if (page <= 1) return;
+    const prevPage = page - 1;
+    setPage(prevPage);
+    fetchWallpapers(
+      selectedCategory === "all" ? "wallpapers" : selectedCategory,
+      prevPage
+    );
   };
 
   const cardVariants = {
@@ -142,15 +140,10 @@ const CollectionsSection = () => {
     try {
       const response = await fetch(url);
       const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-
       const link = document.createElement("a");
-      link.href = blobUrl;
+      link.href = URL.createObjectURL(blob);
       link.download = filename || "wallpaper.jpg";
-      document.body.appendChild(link);
       link.click();
-      link.remove();
-      window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.error("Download failed:", err);
     }
@@ -178,12 +171,12 @@ const CollectionsSection = () => {
           </p>
         </motion.div>
 
-        {/* Mobile Menu Button (top, wide) */}
+        {/* Mobile Menu */}
         <div className="lg:hidden mb-6">
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => setIsMenuOpen(true)}
-            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 text-white py-3 rounded-xl flex items-center justify-center gap-3 hover:bg-white/20 transition-all duration-300"
+            className="w-full bg-white/10 backdrop-blur-xl border border-white/20 text-white py-3 rounded-xl flex items-center justify-center gap-3 hover:bg-white/20 transition"
           >
             <FaBars size={18} />
             <span className="font-medium">Browse Categories</span>
@@ -191,12 +184,12 @@ const CollectionsSection = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 relative">
-          {/* Sidebar (Desktop) */}
+          {/* Sidebar */}
           <motion.aside
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="hidden lg:block w-72 flex-shrink-0 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6 self-start"
+            className="hidden lg:block w-72 bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6"
           >
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <div className="space-y-2">
@@ -206,22 +199,20 @@ const CollectionsSection = () => {
                   whileHover={{ scale: 1.02, x: 4 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 ${
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
                     selectedCategory === cat.id
-                      ? "bg-gradient-to-r from-purple-600/30 to-pink-600/30 border-purple-400/40 text-white"
+                      ? "bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-400/40 text-white"
                       : "bg-transparent border-transparent text-gray-300 hover:bg-white/10"
                   }`}
                 >
-                  <span className="text-xl">
-                    {iconMap[cat.id] || <FaPalette />}
-                  </span>
+                  <span className="text-xl">{iconMap[cat.id]}</span>
                   <span className="font-medium">{cat.name}</span>
                 </motion.button>
               ))}
             </div>
           </motion.aside>
 
-          {/* Wallpapers Grid */}
+          {/* Wallpapers */}
           <div className="flex-1">
             {isLoading ? (
               <div className="flex justify-center py-20">
@@ -244,16 +235,15 @@ const CollectionsSection = () => {
                       initial="hidden"
                       animate="visible"
                       whileHover="hover"
-                      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-transparent backdrop-blur-xl hover:border-purple-400/40 transition-all duration-300"
+                      className="group relative overflow-hidden rounded-2xl border border-white/10 backdrop-blur-xl hover:border-purple-400/40 transition-all"
                     >
                       <img
                         src={wall.urls.small}
                         alt={wall.alt_description || "Wallpaper"}
-                        className="w-full h-64 object-cover rounded-2xl group-hover:opacity-90 transition duration-300"
+                        className="w-full h-64 object-cover rounded-2xl group-hover:opacity-90 transition"
                       />
 
-                      {/* Overlay with buttons */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 p-4 flex flex-col justify-end">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition p-4 flex flex-col justify-end">
                         <h4 className="text-sm font-semibold line-clamp-1">
                           {wall.alt_description || "Untitled"}
                         </h4>
@@ -272,7 +262,7 @@ const CollectionsSection = () => {
                             onClick={() =>
                               handleDownload(wall.urls.full, wall.id + ".jpg")
                             }
-                            className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
+                            className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm flex items-center gap-2 hover:bg-purple-700 transition"
                           >
                             <FaDownload size={14} />
                           </button>
@@ -281,11 +271,12 @@ const CollectionsSection = () => {
                     </motion.div>
                   ))}
                 </motion.div>
+
                 <div className="my-6 flex justify-center">
                   <div id="ad-container-300x250"></div>
                 </div>
 
-                {/* Pagination Controls */}
+                {/* Pagination */}
                 <div className="flex justify-center gap-4 mt-10">
                   <button
                     onClick={handlePrevious}
@@ -309,7 +300,7 @@ const CollectionsSection = () => {
         </div>
       </div>
 
-      {/* Mobile Categories Drawer */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -339,15 +330,13 @@ const CollectionsSection = () => {
                     setSelectedCategory(cat.id);
                     setIsMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 p-4 rounded-xl text-left transition-all ${
+                  className={`w-full flex items-center gap-3 p-4 rounded-xl transition-all ${
                     selectedCategory === cat.id
                       ? "bg-purple-600/30 text-white border border-purple-500/40"
                       : "bg-transparent text-gray-300 hover:bg-white/10"
                   }`}
                 >
-                  <span className="text-xl">
-                    {iconMap[cat.id] || <FaPalette />}
-                  </span>
+                  <span className="text-xl">{iconMap[cat.id]}</span>
                   <span>{cat.name}</span>
                 </motion.button>
               ))}
@@ -359,4 +348,4 @@ const CollectionsSection = () => {
   );
 };
 
-export default CollectionsSection;
+export default Collections;
