@@ -81,7 +81,7 @@ const Popular = () => {
         ) : (
           <>
             <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6"
+              className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
               initial="hidden"
               animate="visible"
               variants={{
@@ -95,17 +95,19 @@ const Popular = () => {
                   initial="hidden"
                   animate="visible"
                   whileHover="hover"
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-transparent backdrop-blur-xl hover:border-purple-400/40 transition-all duration-300"
+                  className="break-inside-avoid group relative overflow-hidden rounded-2xl border border-white/10 bg-transparent backdrop-blur-xl hover:border-purple-400/40 transition-all duration-300"
                 >
                   <img
                     src={wall.urls.small}
                     alt={wall.alt_description || "Wallpaper"}
-                    className="w-full h-64 object-cover rounded-2xl group-hover:opacity-90 transition duration-300"
+                    className="w-full object-cover rounded-2xl group-hover:opacity-90 transition duration-300"
                   />
+
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-300 p-4 flex flex-col justify-end">
                     <h4 className="text-sm font-semibold line-clamp-1 mb-2">
                       {wall.alt_description || "Untitled"}
                     </h4>
+
                     <div className="flex gap-2">
                       <a
                         href={wall.links.html}
@@ -115,6 +117,7 @@ const Popular = () => {
                       >
                         View
                       </a>
+
                       <button
                         onClick={() =>
                           handleDownload(wall.urls.full, wall.id + ".jpg")
