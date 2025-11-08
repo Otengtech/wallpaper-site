@@ -68,40 +68,50 @@ const WallpapersSection = () => {
   ];
 
   useEffect(() => {
+  const container = document.getElementById("ad-container-300x250");
+  if (container) {
+    container.innerHTML = "";
+
     const script = document.createElement("script");
     script.innerHTML = `
-    atOptions = {
-      'key' : '6676d68ba7d23941b9617404b8afd159',
-      'format' : 'iframe',
-      'height' : 250,
-      'width' : 300,
-      'params' : {}
-    };
-  `;
-    document.getElementById("ad-container-300x250").appendChild(script);
+      atOptions = {
+        'key' : '6676d68ba7d23941b9617404b8afd159',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    `;
+    container.appendChild(script);
 
     const script2 = document.createElement("script");
-    script2.src =
-      "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+    script2.src = "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
     script2.async = true;
-    document.getElementById("ad-container-300x250").appendChild(script2);
-  }, []);
+    container.appendChild(script2);
+  }
+}, []);
 
-  const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
-    try {
-      setIsLoading(true);
-      const res = await fetch(
-        `https://api.unsplash.com/search/photos?query=${category}&page=${pageNum}&per_page=12&orientation=portrait&client_id=${accessKey}`
-      );
-      const data = await res.json();
-      setWallpapers(data.results || []);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (err) {
-      console.error("Error fetching wallpapers:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
+  try {
+    setIsLoading(true);
+
+    const query = category === "all" ? "wallpapers" : category;
+
+    const res = await fetch(
+      `https://api.unsplash.com/photos/random?query=${encodeURIComponent(
+        query
+      )}&count=12&orientation=portrait&client_id=${accessKey}`
+    );
+
+    const data = await res.json();
+    setWallpapers(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.error("Error fetching wallpapers:", err);
+    setWallpapers([]);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   useEffect(() => {
     setPage(1);
