@@ -170,7 +170,7 @@ const AboutUs = () => {
                 WallHub
               </span>
             </h1>
-            <p className="text-md text-left md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-md text-left md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
               We're passionate about bringing stunning visuals to your devices. 
               Our mission is to make every screen beautiful, one wallpaper at a time.
             </p>
@@ -340,7 +340,7 @@ const AboutUs = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Why Choose <span className="text-purple-400">Wallify</span>
+              Why Choose <span className="text-purple-400">WallHub</span>
             </h2>
           </motion.div>
 
@@ -366,76 +366,6 @@ const AboutUs = () => {
                 <p className="text-gray-400 text-sm leading-relaxed">
                   {feature.description}
                 </p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Meet Our <span className="text-purple-400">Team</span>
-            </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              The passionate individuals behind Wallify's success
-            </p>
-          </motion.div>
-
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-          >
-            {teamMembers.map((member) => (
-              <motion.div
-                key={member.id}
-                variants={cardVariants}
-                whileHover="hover"
-                className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 text-center group hover:bg-white/10 transition-all duration-300"
-              >
-                <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-2 border-purple-500/50 group-hover:border-purple-400 transition-colors duration-300">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">
-                  {member.name}
-                </h3>
-                <p className="text-purple-400 text-sm mb-3">
-                  {member.role}
-                </p>
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                  {member.bio}
-                </p>
-                <div className="flex justify-center space-x-3">
-                  <a href={member.social.twitter} className="text-gray-400 hover:text-blue-400 transition-colors">
-                    <FaTwitter />
-                  </a>
-                  <a href={member.social.linkedin} className="text-gray-400 hover:text-blue-600 transition-colors">
-                    <FaLinkedin />
-                  </a>
-                  <a href={member.social.github} className="text-gray-400 hover:text-gray-300 transition-colors">
-                    <FaGithub />
-                  </a>
-                  {member.social.instagram && (
-                    <a href={member.social.instagram} className="text-gray-400 hover:text-pink-500 transition-colors">
-                      <FaInstagram />
-                    </a>
-                  )}
-                </div>
               </motion.div>
             ))}
           </motion.div>

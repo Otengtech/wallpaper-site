@@ -48,22 +48,6 @@ const Footer = () => {
               Discover and download beautiful, high-quality wallpapers for every
               device — simple, fast, and free.
             </p>
-
-            {/* Social Links */}
-            <div className="flex space-x-3 mt-6">
-              {socialLinks.map((social, i) => (
-                <motion.a
-                  key={i}
-                  href={social.href}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg p-3 text-gray-400 hover:text-white transition-all duration-300"
-                  aria-label={social.name}
-                >
-                  <span className="text-lg">{social.icon}</span>
-                </motion.a>
-              ))}
-            </div>
           </motion.div>
 
           {/* Quick Links */}

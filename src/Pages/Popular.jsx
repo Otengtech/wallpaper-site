@@ -5,21 +5,35 @@ import { FaDownload } from "react-icons/fa";
 const Popular = () => {
   const [wallpapers, setWallpapers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1); // Current page for pagination
+  const [page, setPage] = useState(1); // current page
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
-  // Fetch popular wallpapers from Unsplash
+  // Categories you want to fetch
+  const categories = ["fast super cars", "beautiful places", "abstract", "nature"];
+
+  // Fetch wallpapers from Unsplash
   const fetchPopularWallpapers = async (pageNum = 1) => {
     try {
       setIsLoading(true);
-      const res = await fetch(
-        `https://api.unsplash.com/photos?order_by=popular&per_page=12&page=${pageNum}&client_id=${accessKey}`
+
+      // Fetch all categories in parallel
+      const promises = categories.map((category) =>
+        fetch(
+          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
+            category
+          )}&per_page=6&page=${pageNum}&client_id=${accessKey}`
+        ).then((res) => res.json())
       );
-      const data = await res.json();
-      setWallpapers(data || []);
-      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
+
+      const results = await Promise.all(promises);
+
+      // Combine results from all categories
+      const combinedWallpapers = results.flatMap((res) => res.results || []);
+      setWallpapers(combinedWallpapers);
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
-      console.error("Error fetching popular wallpapers:", err);
+      console.error("Error fetching wallpapers:", err);
     } finally {
       setIsLoading(false);
     }
@@ -35,7 +49,7 @@ const Popular = () => {
     hover: { scale: 1.05, y: -5 },
   };
 
-  // Download function fetching the image as blob
+  // Download function
   const handleDownload = async (url, name) => {
     try {
       const res = await fetch(url);
@@ -65,7 +79,7 @@ const Popular = () => {
             Most <span className="text-purple-500">Popular</span> Wallpapers
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Explore the most downloaded and loved wallpapers by our community.
+            Explore the most beautiful wallpapers of fast cars, nature, abstract art, and stunning places.
           </p>
         </motion.div>
 
@@ -84,9 +98,7 @@ const Popular = () => {
               className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
               initial="hidden"
               animate="visible"
-              variants={{
-                visible: { transition: { staggerChildren: 0.1 } },
-              }}
+              variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
             >
               {wallpapers.map((wall) => (
                 <motion.div
