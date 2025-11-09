@@ -67,13 +67,13 @@ const WallpapersSection = () => {
     { id: "vintage", name: "Vintage" },
   ];
 
-useEffect(() => {
-  const container = document.getElementById("ad-container-300x250");
-  if (container) {
-    container.innerHTML = "";
+  useEffect(() => {
+    const container = document.getElementById("ad-container-300x250");
+    if (container) {
+      container.innerHTML = "";
 
-    const script = document.createElement("script");
-    script.innerHTML = `
+      const script = document.createElement("script");
+      script.innerHTML = `
       atOptions = {
         'key' : '6676d68ba7d23941b9617404b8afd159',
         'format' : 'iframe',
@@ -82,36 +82,37 @@ useEffect(() => {
         'params' : {}
       };
     `;
-    container.appendChild(script);
+      container.appendChild(script);
 
-    const script2 = document.createElement("script");
-    script2.src = "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
-    script2.async = true;
-    container.appendChild(script2);
-  }
-}, []);
+      const script2 = document.createElement("script");
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.async = true;
+      container.appendChild(script2);
+    }
+  }, []);
 
-const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
-  try {
-    setIsLoading(true);
+  const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
+    try {
+      setIsLoading(true);
 
-    const query = category === "all" ? "wallpapers" : category;
+      const query = category === "all" ? "wallpapers" : category;
 
-    const res = await fetch(
-      `https://api.unsplash.com/photos/random?query=${encodeURIComponent(
-        query
-      )}&count=12&orientation=portrait&client_id=${accessKey}`
-    );
+      const res = await fetch(
+        `https://api.unsplash.com/photos/random?query=${encodeURIComponent(
+          query
+        )}&count=12&orientation=portrait&client_id=${accessKey}`
+      );
 
-    const data = await res.json();
-    setWallpapers(Array.isArray(data) ? data : []);
-  } catch (err) {
-    console.error("Error fetching wallpapers:", err);
-    setWallpapers([]);
-  } finally {
-    setIsLoading(false);
-  }
-};
+      const data = await res.json();
+      setWallpapers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Error fetching wallpapers:", err);
+      setWallpapers([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     setPage(1);
@@ -245,32 +246,33 @@ const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
                   className="break-inside-avoid group relative overflow-hidden rounded-2xl border border-white/10 bg-transparent backdrop-blur-xl hover:border-purple-400/40 transition-all duration-300"
                 >
                   <img
-  src={wall.urls.small}
-  srcSet={`${wall.urls.thumb} 200w, ${wall.urls.small} 400w, ${wall.urls.regular} 1080w`}
-  sizes="(max-width: 640px) 100vw, 50vw"
-  alt={wall.alt_description || "Wallpaper"}
-  className="w-full object-cover rounded-2xl group-hover:opacity-90 transition duration-300"
-/>
+                    src={wall.urls.small}
+                    alt={wall.alt_description || "Wallpaper"}
+                    className="w-full object-cover rounded-2xl group-hover:opacity-90 transition duration-300"
+                  />
 
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition duration-300 p-2 flex flex-col justify-end">
                     <h4 className="text-xs font-semibold line-clamp-1">
                       {wall.alt_description || "Untitled"}
                     </h4>
-                    <div className="flex gap-1 mt-1">
-                      <button
-                        onClick={() => setSelectedWallpaper(wall)}
-                        className="bg-white text-black px-2 py-1 rounded-full text-xs hover:bg-gray-200 transition"
+                    <div className="flex gap-2">
+                      <a
+                        href={wall.links.html}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
                       >
                         View
-                      </button>
+                      </a>
+
                       <button
                         onClick={() =>
                           handleDownload(wall.urls.full, wall.id + ".jpg")
                         }
-                        className="bg-purple-600 text-white px-2 py-1 rounded-full text-xs font-semibold hover:bg-purple-700 transition flex items-center gap-1"
+                        className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
-                        <FaDownload size={12} />
+                        <FaDownload size={14} /> Download
                       </button>
                     </div>
                   </div>
