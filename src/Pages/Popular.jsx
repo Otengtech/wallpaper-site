@@ -121,14 +121,12 @@ const Popular = () => {
                     </h4>
 
                     <div className="flex gap-2">
-                      <a
-                        href={wall.links.html}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
-                      >
-                        View
-                      </a>
+                     <button
+                            onClick={() => setSelectedWallpaper(wall)}
+                            className="bg-white text-black px-4 py-2 rounded-full text-xs hover:bg-gray-200 transition"
+                          >
+                            View
+                          </button>
 
                       <button
                         onClick={() =>
