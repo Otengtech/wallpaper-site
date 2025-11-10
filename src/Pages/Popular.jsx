@@ -123,7 +123,7 @@ const Popular = () => {
                     <div className="flex gap-2">
                      <button
                             onClick={() => setSelectedWallpaper(wall)}
-                            className="bg-white text-black px-4 py-2 rounded-full text-xs hover:bg-gray-200 transition"
+                            className="bg-white text-black px-3 md:px-4 py-2 rounded-full text-xs hover:bg-gray-200 transition"
                           >
                             View
                           </button>
@@ -134,7 +134,7 @@ const Popular = () => {
                         }
                         className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
-                        <FaDownload size={14} /> Download
+                        <FaDownload size={14} />
                       </button>
                     </div>
                   </div>
