@@ -234,7 +234,7 @@ const WallpapersSection = () => {
           ) : (
             <motion.div
               layout
-              className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
+              className="columns-2 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
             >
               {wallpapers.map((wall) => (
                 <motion.div
