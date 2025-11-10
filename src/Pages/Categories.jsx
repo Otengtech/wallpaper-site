@@ -29,6 +29,7 @@ const CategoriesSection = () => {
       color: "from-blue-500 to-cyan-500",
       bgColor: "bg-blue-500/10",
       popular: true,
+      to: "/collections",
     },
     {
       id: "nature",
@@ -39,6 +40,7 @@ const CategoriesSection = () => {
       color: "from-green-500 to-emerald-500",
       bgColor: "bg-green-500/10",
       popular: true,
+      to: "/collections",
     },
     {
       id: "abstract",
@@ -49,6 +51,7 @@ const CategoriesSection = () => {
       count: "180+",
       color: "from-purple-500 to-pink-500",
       bgColor: "bg-purple-500/10",
+      to: "/collections",
     },
     {
       id: "city",
@@ -58,6 +61,7 @@ const CategoriesSection = () => {
       count: "210+",
       color: "from-orange-500 to-red-500",
       bgColor: "bg-orange-500/10",
+      to: "/collections",
     },
     {
       id: "space",
@@ -68,6 +72,7 @@ const CategoriesSection = () => {
       color: "from-indigo-500 to-purple-500",
       bgColor: "bg-indigo-500/10",
       popular: true,
+      to: "/collections",
     },
     {
       id: "animals",
@@ -77,6 +82,7 @@ const CategoriesSection = () => {
       count: "140+",
       color: "from-amber-500 to-yellow-500",
       bgColor: "bg-amber-500/10",
+      to: "/collections",
     },
     {
       id: "cars",
@@ -86,6 +92,7 @@ const CategoriesSection = () => {
       count: "88+",
       color: "from-gray-500 to-blue-500",
       bgColor: "bg-gray-500/10",
+      to: "/collections",
     },
     {
       id: "sky",
@@ -95,6 +102,7 @@ const CategoriesSection = () => {
       count: "120+",
       color: "from-sky-500 to-blue-500",
       bgColor: "bg-sky-500/10",
+      to: "/collections",
     },
     {
       id: "phone",
@@ -105,6 +113,7 @@ const CategoriesSection = () => {
       color: "from-violet-500 to-purple-500",
       bgColor: "bg-violet-500/10",
       popular: true,
+      to: "/collections",
     },
     {
       id: "desktop",
@@ -115,6 +124,7 @@ const CategoriesSection = () => {
       color: "from-cyan-500 to-blue-500",
       bgColor: "bg-cyan-500/10",
       popular: true,
+      to: "/collections",
     },
     {
       id: "dark",
@@ -124,6 +134,7 @@ const CategoriesSection = () => {
       count: "175+",
       color: "from-gray-700 to-gray-900",
       bgColor: "bg-gray-700/10",
+      to: "/collections",
     },
     {
       id: "light",
@@ -133,6 +144,7 @@ const CategoriesSection = () => {
       count: "130+",
       color: "from-yellow-400 to-orange-400",
       bgColor: "bg-yellow-400/10",
+      to: "/collections",
     },
     {
       id: "texture",
@@ -142,6 +154,7 @@ const CategoriesSection = () => {
       count: "85+",
       color: "from-stone-500 to-gray-500",
       bgColor: "bg-stone-500/10",
+      to: "/collections",
     },
     {
       id: "vintage",
@@ -151,6 +164,7 @@ const CategoriesSection = () => {
       count: "65+",
       color: "from-rose-500 to-orange-500",
       bgColor: "bg-rose-500/10",
+      to: "/collections",
     },
   ];
 
@@ -287,11 +301,13 @@ const CategoriesSection = () => {
                 />
 
                 {/* Icon */}
+                <Link href={category.to}>
                 <div
                   className={`${category.bgColor} w-16 h-16 rounded-2xl text-purple-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform duration-300`}
                 >
                   {category.icon}
                 </div>
+              </Link>
 
                 {/* Content */}
                 <h4 className="text-white font-semibold text-lg mb-2">
