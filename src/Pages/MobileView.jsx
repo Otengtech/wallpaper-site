@@ -257,20 +257,19 @@ const WallpapersSection = () => {
                       {wall.alt_description || "Untitled"}
                     </h4>
                     <div className="flex gap-2">
-                      <a
-                        href={wall.links.html}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
-                      >
-                        View
-                      </a>
+                     <button
+                            onClick={() => setSelectedWallpaper(wall)}
+                            className="bg-white text-black px-3 py-1 rounded-full text-xs hover:bg-gray-200 transition"
+                          >
+                            View
+                          </button>
+
 
                       <button
                         onClick={() =>
                           handleDownload(wall.urls.full, wall.id + ".jpg")
                         }
-                        className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
+                        className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
                         <FaDownload size={14} /> Download
                       </button>
