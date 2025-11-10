@@ -32,9 +32,18 @@ const Home = () => {
         <div id="ad-container-300x250"></div>
       </div>
       <AboutSection />
+      <div className="my-6 flex justify-center">
+        <div id="ad-container-300x250"></div>
+      </div>
       <FeaturedWallpapers />
       <HowItWorks />
+      <div className="my-6 flex justify-center">
+        <div id="ad-container-300x250"></div>
+      </div>
       <Reviews />
+      <div className="my-6 flex justify-center">
+        <div id="ad-container-300x250"></div>
+      </div>
     </div>
   );
 };
