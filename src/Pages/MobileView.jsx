@@ -271,7 +271,7 @@ const WallpapersSection = () => {
                         }
                         className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
-                        <FaDownload size={14} /> Download
+                        <FaDownload size={14} />
                       </button>
                     </div>
                   </div>
