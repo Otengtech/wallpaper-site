@@ -93,7 +93,7 @@ const WallpapersSection = () => {
     try {
       setIsLoading(true);
       const query = buildQuery(category);
-      const url = `http://localhost:5000/api/wallpapers?category=${query}&page=${pageNum}`;
+      const url = `https://wallpaper-site-lojq.onrender.com/api/wallpapers?category=${query}&page=${pageNum}`;
       const res = await fetch(url);
       const data = await res.json();
       setWallpapers(data.data || []);
