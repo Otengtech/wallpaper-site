@@ -82,7 +82,7 @@ const WallpapersSection = () => {
     { id: "superhero", name: "Superhero" },
   ];
 
-  // High-resolution 
+  // High-resolution
   const getMobileOptimizedQuery = (category) => {
     const queries = {
       all: "mobile wallpaper 4k portrait",
@@ -92,7 +92,8 @@ const WallpapersSection = () => {
       beach: "beach ocean wallpaper 4k mobile tropical",
       city: "city urban wallpaper 4k mobile skyscraper night",
       cyberpunk: "cyberpunk wallpaper 4k mobile neon futuristic",
-      supercars: "supercar luxury sports car wallpaper 4k mobile ferrari lamborghini porsche bugatti",
+      supercars:
+        "supercar luxury sports car wallpaper 4k mobile ferrari lamborghini porsche bugatti",
       space: "space galaxy wallpaper 4k mobile universe stars",
       fantasy: "fantasy wallpaper 4k mobile digital art",
       abstract: "abstract wallpaper 4k mobile colorful art",
@@ -127,7 +128,8 @@ const WallpapersSection = () => {
       container.appendChild(script);
 
       const script2 = document.createElement("script");
-      script2.src = "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
       script2.async = true;
       container.appendChild(script2);
     }
@@ -136,9 +138,9 @@ const WallpapersSection = () => {
   const fetchWallpapers = async (category = "all", pageNum = 1) => {
     try {
       setIsLoading(true);
-      
+
       const query = getMobileOptimizedQuery(category);
-      
+
       // Use search endpoint for more relevant results
       const res = await fetch(
         `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
@@ -147,21 +149,20 @@ const WallpapersSection = () => {
       );
 
       if (!res.ok) throw new Error(`API response: ${res.status}`);
-      
+
       const data = await res.json();
-      
+
       // Get high-quality images only
-      const highResWallpapers = Array.isArray(data.results) 
-        ? data.results.filter(wallpaper => 
-            wallpaper.width >= 2000 && wallpaper.height >= 3000 // Minimum 2000x3000 for good mobile quality
+      const highResWallpapers = Array.isArray(data.results)
+        ? data.results.filter(
+            (wallpaper) => wallpaper.width >= 2000 && wallpaper.height >= 3000 // Minimum 2000x3000 for good mobile quality
           )
         : [];
-      
+
       setWallpapers(highResWallpapers.slice(0, 16));
-      
     } catch (err) {
       console.error("Error fetching wallpapers:", err);
-      
+
       // Fallback to random photos if search fails
       try {
         const fallbackRes = await fetch(
@@ -169,7 +170,7 @@ const WallpapersSection = () => {
             "wallpaper 4k"
           )}&count=16&orientation=portrait&client_id=${accessKey}`
         );
-        
+
         if (fallbackRes.ok) {
           const fallbackData = await fallbackRes.json();
           setWallpapers(Array.isArray(fallbackData) ? fallbackData : []);
@@ -290,7 +291,8 @@ const WallpapersSection = () => {
               </span>
             </h2>
             <p className="text-gray-400 text-sm md:text-base">
-              Ultra HD mobile wallpapers optimized for modern smartphones. Download in 4K quality.
+              Ultra HD mobile wallpapers optimized for modern smartphones.
+              Download in 4K quality.
             </p>
           </motion.div>
 
@@ -335,38 +337,37 @@ const WallpapersSection = () => {
                     <h4 className="text-sm font-semibold line-clamp-2 mb-2">
                       {wall.alt_description || "Premium Wallpaper"}
                     </h4>
-<<<<<<< HEAD
-                    <p className="text-xs text-gray-300 mb-3">
-                      {wall.width} × {wall.height}
-                    </p>
-                    <div className="flex gap-2 flex-wrap">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedWallpaper(wall);
-                        }}
-                        className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
-                      >
-                        Preview
-                      </button>
+                  </div>
+                  <p className="text-xs text-gray-300 mb-3">
+                    {wall.width} × {wall.height}
+                  </p>
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedWallpaper(wall);
+                      }}
+                      className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
+                    >
+                      Preview
+                    </button>
 
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDownload(wall);
-                        }}
-                        className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
-                      >
-                        <FaDownload size={14} /> Download 4K
-=======
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDownload(wall);
+                      }}
+                      className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
+                    >
+                      <FaDownload size={14} /> Download 4K
+                    </button>
                     <div className="flex gap-2">
-                     <button
-                            onClick={() => setSelectedWallpaper(wall)}
-                            className="bg-white text-black px-3 py-1 rounded-full text-xs hover:bg-gray-200 transition"
-                          >
-                            View
-                          </button>
-
+                      <button
+                        onClick={() => setSelectedWallpaper(wall)}
+                        className="bg-white text-black px-3 py-1 rounded-full text-xs hover:bg-gray-200 transition"
+                      >
+                        View
+                      </button>
 
                       <button
                         onClick={() =>
@@ -375,7 +376,7 @@ const WallpapersSection = () => {
                         className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
                         <FaDownload size={14} />
->>>>>>> ee12a9df046a2240e77ffc61d04bd97939276356
+                        >>>>>>> ee12a9df046a2240e77ffc61d04bd97939276356
                       </button>
                     </div>
                   </div>
@@ -384,7 +385,9 @@ const WallpapersSection = () => {
             </motion.div>
           ) : (
             <div className="text-center py-20">
-              <p className="text-gray-400 text-lg">No high-resolution wallpapers found. Try another category.</p>
+              <p className="text-gray-400 text-lg">
+                No high-resolution wallpapers found. Try another category.
+              </p>
             </div>
           )}
 
@@ -484,7 +487,7 @@ const WallpapersSection = () => {
                 className="w-full h-auto rounded-2xl object-contain shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               />
-              
+
               {/* Download button in modal */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
                 <button
@@ -497,7 +500,7 @@ const WallpapersSection = () => {
                   <FaDownload size={16} /> Download 4K
                 </button>
               </div>
-              
+
               <button
                 onClick={() => setSelectedWallpaper(null)}
                 className="absolute -top-12 right-0 text-white bg-black/40 hover:bg-black/60 p-3 rounded-full"
