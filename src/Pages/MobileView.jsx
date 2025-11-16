@@ -95,6 +95,7 @@ const WallpapersSection = () => {
   const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
     try {
       setIsLoading(true);
+<<<<<<< HEAD
 
       const query = category === "all" ? "wallpapers" : category;
 
@@ -104,6 +105,11 @@ const WallpapersSection = () => {
         )}&count=12&orientation=portrait&client_id=${accessKey}`
       );
 
+=======
+      const query = buildQuery(category);
+      const url = `https://wallpaper-site-lojq.onrender.com/api/wallpapers?category=${query}&page=${pageNum}`;
+      const res = await fetch(url);
+>>>>>>> 06e2a20b45ab06c2ba03d4fe1d8a226a5cd53925
       const data = await res.json();
       setWallpapers(Array.isArray(data) ? data : []);
     } catch (err) {
