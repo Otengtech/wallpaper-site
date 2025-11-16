@@ -46,7 +46,7 @@ const WallpapersSection = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedWallpaper, setSelectedWallpaper] = useState(null); // modal state
+  const [selectedWallpaper, setSelectedWallpaper] = useState(null);
 
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
