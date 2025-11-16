@@ -19,9 +19,6 @@ import {
   FaGripHorizontal,
   FaCameraRetro,
   FaTachometerAlt,
-  FaExpand,
-  FaCompress,
-  FaSearch,
 } from "react-icons/fa";
 
 const iconMap = {
@@ -68,23 +65,21 @@ const WallpapersSection = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedWallpaper, setSelectedWallpaper] = useState(null);
   const [loadedImages, setLoadedImages] = useState({});
-  const [orientation, setOrientation] = useState("portrait"); // "portrait" or "landscape"
-  const [searchQuery, setSearchQuery] = useState("");
 
-  // Build query for backend
+  // Build query for backend/Wallhaven
   const buildQuery = (category) => {
-    if (category === "all") return "wallpapers";
+    if (category === "all") return "";
     const queries = {
-      nature: "nature landscape",
-      abstract: "abstract digital art", 
+      nature: "nature landscape forest mountain",
+      abstract: "abstract digital art",
       minimal: "minimal simple",
       city: "city urban architecture",
       space: "space galaxy universe",
       animals: "animals wildlife",
-      cars: "cars automotive",
+      cars: "cars automotive supercars",
       sky: "sky clouds",
       phone: "mobile phone",
-      desktop: "desktop computer",
+      desktop: "desktop 4k",
       dark: "dark black",
       light: "light white bright",
       texture: "texture pattern",
@@ -94,14 +89,15 @@ const WallpapersSection = () => {
   };
 
   // Fetch wallpapers from backend
-  const fetchWallpapers = async (category = "all", pageNum = 1, orient = orientation) => {
+  const fetchWallpapers = async (category = "all", pageNum = 1) => {
     try {
       setIsLoading(true);
       const query = buildQuery(category);
-      const url = `https://wallpaper-site-lojq.onrender.com/api/wallpapers?category=${query}&page=${pageNum}&orientation=${orient}`;
+      const url = `http://localhost:5000/api/wallpapers?category=${query}&page=${pageNum}`;
       const res = await fetch(url);
       const data = await res.json();
-      setWallpapers(data.photos || []);
+      setWallpapers(data.data || []);
+      preloadNextPage(data.data || [], category, pageNum + 1);
     } catch (err) {
       console.error("Error fetching wallpapers:", err);
       setWallpapers([]);
@@ -110,16 +106,34 @@ const WallpapersSection = () => {
     }
   };
 
+  // Preload next page images
+  const preloadNextPage = async (currentData, category, nextPageNum) => {
+    try {
+      const query = buildQuery(category);
+      const url = `http://localhost:5000/api/wallpapers?category=${query}&page=${nextPageNum}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.data) {
+        data.data.forEach((wall) => {
+          const img = new Image();
+          img.src = wall.path; // preload 3K preview
+        });
+      }
+    } catch (err) {
+      console.warn("Preloading next page failed:", err);
+    }
+  };
+
   useEffect(() => {
     setPage(1);
-    fetchWallpapers(selectedCategory, 1, orientation);
-  }, [selectedCategory, orientation]);
+    fetchWallpapers(selectedCategory);
+  }, [selectedCategory]);
 
   const handleNext = () => {
     const nextPage = page + 1;
     setPage(nextPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
-    fetchWallpapers(selectedCategory, nextPage, orientation);
+    fetchWallpapers(selectedCategory, nextPage);
   };
 
   const handlePrevious = () => {
@@ -127,21 +141,7 @@ const WallpapersSection = () => {
       const prevPage = page - 1;
       setPage(prevPage);
       window.scrollTo({ top: 0, behavior: "smooth" });
-      fetchWallpapers(selectedCategory, prevPage, orientation);
-    }
-  };
-
-  const toggleOrientation = () => {
-    setOrientation(prev => prev === "portrait" ? "landscape" : "portrait");
-    setPage(1);
-  };
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setSelectedCategory(searchQuery.trim());
-      setPage(1);
-      setSearchQuery("");
+      fetchWallpapers(selectedCategory, prevPage);
     }
   };
 
@@ -151,7 +151,7 @@ const WallpapersSection = () => {
 
   const handleDownload = async (wallpaper) => {
     try {
-      const imageUrl = wallpaper.src.original;
+      const imageUrl = wallpaper.path || wallpaper.url;
       const response = await fetch(imageUrl);
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
@@ -164,7 +164,7 @@ const WallpapersSection = () => {
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.error("Download failed:", err);
-      window.open(wallpaper.src.original, "_blank");
+      window.open(wallpaper.path || wallpaper.url, "_blank");
     }
   };
 
@@ -203,45 +203,7 @@ const WallpapersSection = () => {
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row gap-6">
         {/* Sidebar */}
         <div className="hidden md:flex flex-col w-64 flex-shrink-0 gap-3">
-          <div className="mb-6">
-            <h3 className="text-xl font-bold mb-3">Categories</h3>
-            
-            {/* Orientation Toggle */}
-            <div className="mb-4 p-3 bg-gray-800 rounded-xl">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-300">View Mode:</span>
-                <button
-                  onClick={toggleOrientation}
-                  className={`flex items-center gap-2 px-3 py-1 rounded-lg text-xs transition-all ${
-                    orientation === "portrait"
-                      ? "bg-purple-600 text-white"
-                      : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                  }`}
-                >
-                  {orientation === "portrait" ? <FaMobileAlt /> : <FaDesktop />}
-                  {orientation === "portrait" ? "Mobile" : "Desktop"}
-                </button>
-              </div>
-              <p className="text-xs text-gray-400">
-                {orientation === "portrait" ? "9:16 Portrait" : "16:9 Landscape"}
-              </p>
-            </div>
-
-            {/* Search */}
-            <form onSubmit={handleSearch} className="mb-4">
-              <div className="relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
-                <input
-                  type="text"
-                  placeholder="Search wallpapers..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-            </form>
-          </div>
-
+          <h3 className="text-xl font-bold mb-3">Categories</h3>
           {categories.map((cat) => (
             <button
               key={cat.id}
@@ -262,8 +224,8 @@ const WallpapersSection = () => {
 
         {/* Main content */}
         <div className="flex-1">
-          {/* Mobile menu and controls */}
-          <div className="md:hidden mb-6 space-y-4">
+          {/* Mobile menu */}
+          <div className="md:hidden mb-6">
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => setIsMenuOpen(true)}
@@ -271,36 +233,6 @@ const WallpapersSection = () => {
             >
               <FaBars size={18} /> Browse Categories
             </motion.button>
-
-            {/* Mobile Orientation Toggle */}
-            <div className="flex items-center justify-between bg-gray-800/50 p-3 rounded-xl">
-              <span className="text-sm">View Mode:</span>
-              <button
-                onClick={toggleOrientation}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                  orientation === "portrait"
-                    ? "bg-purple-600 text-white"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                {orientation === "portrait" ? <FaMobileAlt /> : <FaDesktop />}
-                {orientation === "portrait" ? "Mobile (9:16)" : "Desktop (16:9)"}
-              </button>
-            </div>
-
-            {/* Mobile Search */}
-            <form onSubmit={handleSearch}>
-              <div className="relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search wallpapers..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-            </form>
           </div>
 
           {/* Header */}
@@ -310,42 +242,15 @@ const WallpapersSection = () => {
             transition={{ duration: 0.6 }}
             className="text-center md:text-left mb-6"
           >
-            <div className="flex flex-col md:flex-row md:items-center justify-between">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">
-                  {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}{" "}
-                  <span className="bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">
-                    Wallpapers
-                  </span>
-                </h2>
-                <p className="text-gray-400 text-sm md:text-base">
-                  {orientation === "portrait" 
-                    ? "Beautiful mobile wallpapers (9:16)" 
-                    : "Stunning desktop wallpapers (16:9)"
-                  }
-                </p>
-              </div>
-              
-              {/* Desktop Orientation Toggle */}
-              <div className="hidden md:flex items-center gap-4 mt-4 md:mt-0">
-                <div className="text-right">
-                  <div className="text-sm text-gray-400">Current View</div>
-                  <div className="text-lg font-semibold">
-                    {orientation === "portrait" ? "Mobile (9:16)" : "Desktop (16:9)"}
-                  </div>
-                </div>
-                <button
-                  onClick={toggleOrientation}
-                  className={`p-3 rounded-xl border transition-all ${
-                    orientation === "portrait"
-                      ? "bg-purple-600 border-purple-500 text-white"
-                      : "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700"
-                  }`}
-                >
-                  {orientation === "portrait" ? <FaMobileAlt size={20} /> : <FaDesktop size={20} />}
-                </button>
-              </div>
-            </div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">
+              Wallpapers{" "}
+              <span className="bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">
+                Showcase
+              </span>
+            </h2>
+            <p className="text-gray-400 text-sm md:text-base">
+              Browse high-quality wallpapers with fast loading.
+            </p>
           </motion.div>
 
           {/* Wallpapers Grid */}
@@ -360,11 +265,7 @@ const WallpapersSection = () => {
           ) : (
             <motion.div
               layout
-              className={`gap-6 space-y-6 ${
-                orientation === "portrait" 
-                  ? "columns-2 sm:columns-2 md:columns-3 xl:columns-4"
-                  : "columns-2 md:columns-2 xl:columns-3"
-              }`}
+              className="columns-2 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
             >
               {wallpapers.map((wall) => (
                 <motion.div
@@ -377,11 +278,9 @@ const WallpapersSection = () => {
                   onClick={() => setSelectedWallpaper(wall)}
                 >
                   <img
-                    src={wall.src.medium}
-                    alt={wall.photographer}
+                    src={wall.thumbs?.large || wall.path}
+                    alt={wall.tags?.[0]?.name || "Wallpaper"}
                     className={`w-full h-auto object-cover rounded-2xl transition duration-500 ${
-                      orientation === "portrait" ? "aspect-[9/16]" : "aspect-video"
-                    } ${
                       loadedImages[wall.id]
                         ? "opacity-100 blur-0"
                         : "opacity-0 blur-xl"
@@ -391,7 +290,7 @@ const WallpapersSection = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition duration-300 p-2 flex flex-col justify-end">
                     <h4 className="text-xs font-semibold line-clamp-1">
-                      by {wall.photographer}
+                      {wall.tags?.[0]?.name || "Wallpaper"}
                     </h4>
                     <div className="flex gap-2 mt-2">
                       <button
@@ -399,7 +298,7 @@ const WallpapersSection = () => {
                           e.stopPropagation();
                           setSelectedWallpaper(wall);
                         }}
-                        className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
+                        className="bg-white text-black px-2 py-1 md:px-4 md:py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
                       >
                         View
                       </button>
@@ -408,7 +307,7 @@ const WallpapersSection = () => {
                           e.stopPropagation();
                           handleDownload(wall);
                         }}
-                        className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
+                        className="bg-purple-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
                         <FaDownload size={14} /> Download
                       </button>
@@ -419,14 +318,6 @@ const WallpapersSection = () => {
             </motion.div>
           )}
 
-          {/* No Results */}
-          {!isLoading && wallpapers.length === 0 && (
-            <div className="text-center py-20">
-              <div className="text-gray-400 text-lg mb-2">No wallpapers found</div>
-              <div className="text-gray-500 text-sm">Try a different category or search term</div>
-            </div>
-          )}
-
           {/* Ads */}
           <div className="my-6 flex justify-center">
             <div id="ad-container-300x250"></div>
@@ -434,26 +325,21 @@ const WallpapersSection = () => {
 
           {/* Pagination */}
           {wallpapers.length > 0 && (
-            <div className="flex justify-between items-center mt-6">
+            <div className="flex justify-between mt-6">
               <button
                 onClick={handlePrevious}
                 disabled={page === 1}
-                className={`px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition ${
                   page === 1 ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
                 Previous
               </button>
-              
-              <div className="text-gray-300 text-sm">
-                Page {page} • {orientation === "portrait" ? "Mobile" : "Desktop"} View
-              </div>
-              
               <button
                 onClick={handleNext}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition"
               >
-                Next Page
+                Next
               </button>
             </div>
           )}
@@ -479,22 +365,7 @@ const WallpapersSection = () => {
                 <FaTimes size={20} />
               </button>
             </div>
-            
-            {/* Mobile Search in Drawer */}
-            <form onSubmit={handleSearch} className="mb-4">
-              <div className="relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search wallpapers..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
-              </div>
-            </form>
-            
-            <div className="space-y-3 overflow-y-auto flex-1">
+            <div className="space-y-3 overflow-y-auto">
               {categories.map((cat) => (
                 <motion.button
                   key={cat.id}
@@ -528,7 +399,7 @@ const WallpapersSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black flex items-center justify-center p-0"
             onClick={() => setSelectedWallpaper(null)}
           >
             <button
@@ -539,11 +410,7 @@ const WallpapersSection = () => {
             </button>
 
             <div className="absolute top-4 left-4 z-10 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm">
-              {orientation === "portrait" ? "4K Mobile" : "4K Desktop"}
-            </div>
-
-            <div className="absolute top-4 left-32 z-10 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm">
-              by {selectedWallpaper.photographer}
+              4K
             </div>
 
             <button
@@ -560,9 +427,9 @@ const WallpapersSection = () => {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              src={selectedWallpaper.src.large2x}
-              alt={selectedWallpaper.photographer}
-              className="max-w-full max-h-full object-contain cursor-pointer"
+              src={selectedWallpaper.path}
+              alt={selectedWallpaper.tags?.[0]?.name || "Wallpaper"}
+              className="w-full object-cover cursor-pointer"
               onClick={(e) => e.stopPropagation()}
               loading="lazy"
             />

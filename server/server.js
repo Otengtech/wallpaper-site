@@ -6,32 +6,43 @@ import NodeCache from "node-cache";
 const app = express();
 app.use(cors());
 
-const PEXELS_API_KEY = "Rwm0ojPUYWYH2Ch1an2FYHFzsVoR0Wy4fg07llpObQkB65IiAE89ssLK"; // keep secret
-const cache = new NodeCache({ stdTTL: 30 }); // cache for 30 seconds
+const API_KEY = "6RVEhwZ9Tdnfw1ke6dTfcMAHtDDjA1EG";
+const cache = new NodeCache({ stdTTL: 30 });
 
 app.get("/api/wallpapers", async (req, res) => {
-  const category = req.query.category || "nature";
+  const category = req.query.category || "all";
   const page = req.query.page || 1;
-  const perPage = 20;
 
-  const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(category)}&orientation=portrait&per_page=${perPage}&page=${page}`;
+  // Enhanced portrait filtering
+  const resolution = "1080x1920";
+  const ratios = "9x16,10x16,9x18"; // Multiple portrait ratios
+  const purity = "100"; // SFW content only
+
+  let url = `https://wallhaven.cc/api/v1/search?apikey=${API_KEY}&page=${page}&sorting=random&resolutions=${resolution}&ratios=${ratios}&purity=${purity}`;
+  
+  if (category !== "all") {
+    url += `&q=${encodeURIComponent(category)}`;
+  }
 
   try {
-    // Check cache
     const cachedData = cache.get(url);
     if (cachedData) return res.json(cachedData);
 
-    // Fetch from Pexels
-    const response = await axios.get(url, {
-      headers: { Authorization: PEXELS_API_KEY },
-      timeout: 7000,
-    });
-
+    const response = await axios.get(url, { timeout: 7000 });
     let data = response.data;
 
-    // Shuffle results for randomness
-    if (data.photos && Array.isArray(data.photos)) {
-      data.photos = data.photos.sort(() => Math.random() - 0.5);
+    // Filter to ensure only portrait images
+    if (data.data && Array.isArray(data.data)) {
+      data.data = data.data
+        .filter(wallpaper => {
+          // Additional client-side ratio validation
+          const ratio = wallpaper.ratio;
+          if (!ratio) return true;
+          
+          const [width, height] = ratio.split(':').map(Number);
+          return height > width; // Ensure portrait orientation
+        })
+        .sort(() => Math.random() - 0.5);
     }
 
     cache.set(url, data);
