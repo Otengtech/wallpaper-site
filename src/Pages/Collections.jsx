@@ -58,6 +58,31 @@ const CollectionsSection = () => {
 
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
+   useEffect(() => {
+    const container = document.getElementById("ad-container-300x250");
+    if (container) {
+      container.innerHTML = "";
+
+      const script = document.createElement("script");
+      script.innerHTML = `
+      atOptions = {
+        'key' : '6676d68ba7d23941b9617404b8afd159',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    `;
+      container.appendChild(script);
+
+      const script2 = document.createElement("script");
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.async = true;
+      container.appendChild(script2);
+    }
+  }, []);
+
   const categories = [
     { id: "all", name: "All Wallpapers" },
     { id: "nature", name: "Nature" },
@@ -183,7 +208,7 @@ const CollectionsSection = () => {
               <>
                 <motion.div
                   layout
-                  className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
+                  className="columns-2 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
                 >
                   {wallpapers.map((wall) => (
                     <motion.div
@@ -226,6 +251,10 @@ const CollectionsSection = () => {
                     </motion.div>
                   ))}
                 </motion.div>
+
+                <div className="my-6 flex justify-center">
+            <div id="ad-container-300x250"></div>
+          </div>
 
                 {/* Refresh */}
                 <div className="flex justify-center mt-10">

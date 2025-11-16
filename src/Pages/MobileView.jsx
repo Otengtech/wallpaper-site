@@ -82,7 +82,7 @@ const WallpapersSection = () => {
     { id: "superhero", name: "Superhero" },
   ];
 
-  // High-resolution mobile optimized search queries
+  // High-resolution 
   const getMobileOptimizedQuery = (category) => {
     const queries = {
       all: "mobile wallpaper 4k portrait",
@@ -306,7 +306,7 @@ const WallpapersSection = () => {
           ) : wallpapers.length > 0 ? (
             <motion.div
               layout
-              className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
+              className="columns-2 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
             >
               {wallpapers.map((wall) => (
                 <motion.div
@@ -335,6 +335,7 @@ const WallpapersSection = () => {
                     <h4 className="text-sm font-semibold line-clamp-2 mb-2">
                       {wall.alt_description || "Premium Wallpaper"}
                     </h4>
+<<<<<<< HEAD
                     <p className="text-xs text-gray-300 mb-3">
                       {wall.width} × {wall.height}
                     </p>
@@ -357,6 +358,24 @@ const WallpapersSection = () => {
                         className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
                         <FaDownload size={14} /> Download 4K
+=======
+                    <div className="flex gap-2">
+                     <button
+                            onClick={() => setSelectedWallpaper(wall)}
+                            className="bg-white text-black px-3 py-1 rounded-full text-xs hover:bg-gray-200 transition"
+                          >
+                            View
+                          </button>
+
+
+                      <button
+                        onClick={() =>
+                          handleDownload(wall.urls.full, wall.id + ".jpg")
+                        }
+                        className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
+                      >
+                        <FaDownload size={14} />
+>>>>>>> ee12a9df046a2240e77ffc61d04bd97939276356
                       </button>
                     </div>
                   </div>
