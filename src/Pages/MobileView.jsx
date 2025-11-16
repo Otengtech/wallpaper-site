@@ -12,19 +12,16 @@ import {
   FaCat,
   FaCar,
   FaCloud,
+  FaMobileAlt,
+  FaDesktop,
   FaRegMoon,
   FaSun,
   FaGripHorizontal,
   FaCameraRetro,
   FaTachometerAlt,
-  FaMountain,
-  FaWater,
-  FaStar,
-  FaTheaterMasks,
 } from "react-icons/fa";
 
 const iconMap = {
-  all: <FaTachometerAlt />,
   nature: <FaLeaf />,
   abstract: <FaPalette />,
   minimal: <FaThLarge />,
@@ -32,20 +29,15 @@ const iconMap = {
   space: <FaRocket />,
   animals: <FaCat />,
   cars: <FaCar />,
-  landscape: <FaMountain />,
+  sky: <FaCloud />,
+  phone: <FaMobileAlt />,
+  desktop: <FaDesktop />,
   dark: <FaRegMoon />,
   light: <FaSun />,
   texture: <FaGripHorizontal />,
   vintage: <FaCameraRetro />,
-  superhero: <FaTheaterMasks />,
-  aesthetic: <FaStar />,
-  gradient: <FaSun />,
-  geometric: <FaThLarge />,
-  floral: <FaLeaf />,
-  beach: <FaWater />,
-  mountains: <FaMountain />,
-  cyberpunk: <FaCity />,
-  fantasy: <FaRocket />,
+  spiderman: <FaRegMoon/>,
+  all: <FaTachometerAlt />,
 };
 
 const WallpapersSection = () => {
@@ -54,77 +46,44 @@ const WallpapersSection = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedWallpaper, setSelectedWallpaper] = useState(null);
+  const [selectedWallpaper, setSelectedWallpaper] = useState(null); // modal state
 
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
   const categories = [
     { id: "all", name: "All Wallpapers" },
     { id: "nature", name: "Nature" },
-    { id: "landscape", name: "Landscape" },
-    { id: "mountains", name: "Mountains" },
-    { id: "beach", name: "Beach & Ocean" },
-    { id: "city", name: "City & Urban" },
-    { id: "supercars", name: "Supercars" },
-    { id: "cyberpunk", name: "Cyberpunk" },
-    { id: "space", name: "Space & Galaxy" },
-    { id: "fantasy", name: "Fantasy" },
     { id: "abstract", name: "Abstract" },
-    { id: "gradient", name: "Gradient" },
-    { id: "geometric", name: "Geometric" },
-    { id: "floral", name: "Floral" },
-    { id: "texture", name: "Textures" },
     { id: "minimal", name: "Minimal" },
-    { id: "aesthetic", name: "Aesthetic" },
+    { id: "city", name: "City & Urban" },
+    { id: "space", name: "Space & Galaxy" },
+    { id: "animals", name: "Animals" },
+    { id: "cars", name: "Cars & Vehicles" },
+    { id: "sky", name: "Sky & Clouds" },
+    { id: "phone", name: "Phone Wallpapers" },
+    { id: "desktop", name: "Desktop Wallpapers" },
     { id: "dark", name: "Dark Mode" },
     { id: "light", name: "Light Mode" },
+    { id: "texture", name: "Textures" },
     { id: "vintage", name: "Vintage" },
     { id: "superhero", name: "Superhero" },
   ];
-
-  // High-resolution
-  const getMobileOptimizedQuery = (category) => {
-    const queries = {
-      all: "mobile wallpaper 4k portrait",
-      nature: "nature wallpaper 4k mobile landscape forest",
-      landscape: "landscape wallpaper 4k mobile mountains sunset",
-      mountains: "mountain wallpaper 4k mobile scenic",
-      beach: "beach ocean wallpaper 4k mobile tropical",
-      city: "city urban wallpaper 4k mobile skyscraper night",
-      cyberpunk: "cyberpunk wallpaper 4k mobile neon futuristic",
-      supercars:
-        "supercar luxury sports car wallpaper 4k mobile ferrari lamborghini porsche bugatti",
-      space: "space galaxy wallpaper 4k mobile universe stars",
-      fantasy: "fantasy wallpaper 4k mobile digital art",
-      abstract: "abstract wallpaper 4k mobile colorful art",
-      gradient: "gradient wallpaper 4k mobile colorful",
-      geometric: "geometric wallpaper 4k mobile pattern",
-      floral: "floral wallpaper 4k mobile flowers",
-      texture: "texture wallpaper 4k mobile pattern",
-      minimal: "minimal wallpaper 4k mobile simple clean",
-      aesthetic: "aesthetic wallpaper 4k mobile artistic",
-      dark: "dark wallpaper 4k mobile amoled black",
-      light: "light wallpaper 4k mobile bright white",
-      vintage: "vintage wallpaper 4k mobile retro",
-      superhero: "superhero wallpaper 4k mobile marvel dc",
-    };
-    return queries[category] || queries.all;
-  };
 
   useEffect(() => {
     const container = document.getElementById("ad-container-300x250");
     if (container) {
       container.innerHTML = "";
+
       const script = document.createElement("script");
       script.innerHTML = `
-        atOptions = {
-          'key' : '6676d68ba7d23941b9617404b8afd159',
-          'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
-          'params' : {}
-        };
-      `;
+      atOptions = {
+        'key' : '6676d68ba7d23941b9617404b8afd159',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    `;
       container.appendChild(script);
 
       const script2 = document.createElement("script");
@@ -135,52 +94,23 @@ const WallpapersSection = () => {
     }
   }, []);
 
-  const fetchWallpapers = async (category = "all", pageNum = 1) => {
+  const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
     try {
       setIsLoading(true);
 
-      const query = getMobileOptimizedQuery(category);
+      const query = category === "all" ? "wallpapers" : category;
 
-      // Use search endpoint for more relevant results
       const res = await fetch(
-        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
+        `https://api.unsplash.com/photos/random?query=${encodeURIComponent(
           query
-        )}&page=${pageNum}&per_page=20&orientation=portrait&client_id=${accessKey}`
+        )}&count=12&orientation=portrait&client_id=${accessKey}`
       );
 
-      if (!res.ok) throw new Error(`API response: ${res.status}`);
-
       const data = await res.json();
-
-      // Get high-quality images only
-      const highResWallpapers = Array.isArray(data.results)
-        ? data.results.filter(
-            (wallpaper) => wallpaper.width >= 2000 && wallpaper.height >= 3000 // Minimum 2000x3000 for good mobile quality
-          )
-        : [];
-
-      setWallpapers(highResWallpapers.slice(0, 16));
+      setWallpapers(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching wallpapers:", err);
-
-      // Fallback to random photos if search fails
-      try {
-        const fallbackRes = await fetch(
-          `https://api.unsplash.com/photos/random?query=${encodeURIComponent(
-            "wallpaper 4k"
-          )}&count=16&orientation=portrait&client_id=${accessKey}`
-        );
-
-        if (fallbackRes.ok) {
-          const fallbackData = await fallbackRes.json();
-          setWallpapers(Array.isArray(fallbackData) ? fallbackData : []);
-        } else {
-          setWallpapers([]);
-        }
-      } catch (fallbackErr) {
-        console.error("Fallback also failed:", fallbackErr);
-        setWallpapers([]);
-      }
+      setWallpapers([]);
     } finally {
       setIsLoading(false);
     }
@@ -188,49 +118,48 @@ const WallpapersSection = () => {
 
   useEffect(() => {
     setPage(1);
-    fetchWallpapers(selectedCategory);
+    fetchWallpapers(
+      selectedCategory === "all" ? "wallpapers" : selectedCategory
+    );
   }, [selectedCategory]);
 
   const handleNext = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    fetchWallpapers(selectedCategory, nextPage);
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
+    fetchWallpapers(
+      selectedCategory === "all" ? "wallpapers" : selectedCategory,
+      nextPage
+    );
   };
 
   const handlePrevious = () => {
     if (page > 1) {
       const prevPage = page - 1;
       setPage(prevPage);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      fetchWallpapers(selectedCategory, prevPage);
+      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
+      fetchWallpapers(
+        selectedCategory === "all" ? "wallpapers" : selectedCategory,
+        prevPage
+      );
     }
   };
 
-  const handleDownload = async (wallpaper) => {
+  const handleDownload = async (url, filename) => {
     try {
-      // Use the highest quality available
-      const downloadUrl = wallpaper.urls.raw + "&w=2160&q=85"; // 4K quality
-      const response = await fetch(downloadUrl);
+      const response = await fetch(url);
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.download = `wallpaper-${wallpaper.id}-4k.jpg`;
+      link.download = filename || "wallpaper.jpg";
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.error("Download failed:", err);
-      // Fallback to regular URL
-      const link = document.createElement("a");
-      link.href = wallpaper.urls.full;
-      link.download = `wallpaper-${wallpaper.id}.jpg`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
     }
   };
 
@@ -285,14 +214,13 @@ const WallpapersSection = () => {
             className="text-center md:text-left mb-6"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-2">
-              4K Mobile Wallpapers{" "}
+              Wallpapers{" "}
               <span className="bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent">
-                Collection
+                Showcase
               </span>
             </h2>
             <p className="text-gray-400 text-sm md:text-base">
-              Ultra HD mobile wallpapers optimized for modern smartphones.
-              Download in 4K quality.
+              Browse high-quality wallpapers (9:16 portrait) for any device.
             </p>
           </motion.div>
 
@@ -305,10 +233,10 @@ const WallpapersSection = () => {
                 className="w-14 h-14 border-4 border-purple-500 border-t-transparent rounded-full"
               />
             </div>
-          ) : wallpapers.length > 0 ? (
+          ) : (
             <motion.div
               layout
-              className="columns-2 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
+              className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
             >
               {wallpapers.map((wall) => (
                 <motion.div
@@ -317,78 +245,42 @@ const WallpapersSection = () => {
                   initial="hidden"
                   animate="visible"
                   whileHover="hover"
-                  className="break-inside-avoid group relative overflow-hidden rounded-2xl border border-white/10 bg-transparent backdrop-blur-xl hover:border-purple-400/40 transition-all duration-300 cursor-pointer"
-                  onClick={() => setSelectedWallpaper(wall)}
+                  className="break-inside-avoid group relative overflow-hidden rounded-2xl border border-white/10 bg-transparent backdrop-blur-xl hover:border-purple-400/40 transition-all duration-300"
                 >
                   <img
-                    src={wall.urls.regular}
-                    alt={wall.alt_description || "4K Mobile Wallpaper"}
-                    className="w-full h-auto object-cover rounded-2xl group-hover:opacity-90 transition duration-300"
-                    loading="lazy"
+                    src={wall.urls.small}
+                    alt={wall.alt_description || "Wallpaper"}
+                    className="w-full object-cover rounded-2xl group-hover:opacity-90 transition duration-300"
                   />
 
-                  {/* Quality Badge */}
-                  <div className="absolute top-3 right-3 bg-green-600/90 text-white px-2 py-1 rounded-full text-xs font-bold">
-                    4K
-                  </div>
-
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 hover:opacity-100 transition duration-300 p-4 flex flex-col justify-end">
-                    <h4 className="text-sm font-semibold line-clamp-2 mb-2">
-                      {wall.alt_description || "Premium Wallpaper"}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition duration-300 p-2 flex flex-col justify-end">
+                    <h4 className="text-xs font-semibold line-clamp-1">
+                      {wall.alt_description || "Untitled"}
                     </h4>
-                  </div>
-                  <p className="text-xs text-gray-300 mb-3">
-                    {wall.width} × {wall.height}
-                  </p>
-                  <div className="flex gap-2 flex-wrap">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedWallpaper(wall);
-                      }}
-                      className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
-                    >
-                      Preview
-                    </button>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDownload(wall);
-                      }}
-                      className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
-                    >
-                      <FaDownload size={14} /> Download 4K
-                    </button>
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => setSelectedWallpaper(wall)}
-                        className="bg-white text-black px-3 py-1 rounded-full text-xs hover:bg-gray-200 transition"
+                      <a
+                        href={wall.links.html}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
                       >
                         View
-                      </button>
+                      </a>
 
                       <button
                         onClick={() =>
                           handleDownload(wall.urls.full, wall.id + ".jpg")
                         }
-                        className="bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
+                        className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
-                        <FaDownload size={14} />
-                        >>>>>>> ee12a9df046a2240e77ffc61d04bd97939276356
+                        <FaDownload size={14} /> Download
                       </button>
                     </div>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
-          ) : (
-            <div className="text-center py-20">
-              <p className="text-gray-400 text-lg">
-                No high-resolution wallpapers found. Try another category.
-              </p>
-            </div>
           )}
 
           <div className="my-6 flex justify-center">
@@ -396,28 +288,23 @@ const WallpapersSection = () => {
           </div>
 
           {/* Pagination */}
-          {wallpapers.length > 0 && (
-            <div className="flex justify-between items-center mt-6">
-              <button
-                onClick={handlePrevious}
-                disabled={page === 1}
-                className={`px-6 py-3 rounded-xl border border-white/20 hover:bg-white/10 transition ${
-                  page === 1 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                Previous
-              </button>
-              <span className="px-4 py-3 text-gray-400 text-sm">
-                Page {page} • {wallpapers.length} wallpapers
-              </span>
-              <button
-                onClick={handleNext}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition"
-              >
-                Next
-              </button>
-            </div>
-          )}
+          <div className="flex justify-between mt-6">
+            <button
+              onClick={handlePrevious}
+              disabled={page === 1}
+              className={`px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition ${
+                page === 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNext}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
 
@@ -474,40 +361,24 @@ const WallpapersSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-lg p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-lg p-0 md:p-10"
             onClick={() => setSelectedWallpaper(null)}
           >
-            <div className="relative max-w-md w-full">
-              <motion.img
-                src={selectedWallpaper.urls.regular}
-                alt={selectedWallpaper.alt_description || "4K Mobile Wallpaper"}
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                className="w-full h-auto rounded-2xl object-contain shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
-              />
-
-              {/* Download button in modal */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDownload(selectedWallpaper);
-                  }}
-                  className="bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition flex items-center gap-2 shadow-lg"
-                >
-                  <FaDownload size={16} /> Download 4K
-                </button>
-              </div>
-
-              <button
-                onClick={() => setSelectedWallpaper(null)}
-                className="absolute -top-12 right-0 text-white bg-black/40 hover:bg-black/60 p-3 rounded-full"
-              >
-                <FaTimes size={24} />
-              </button>
-            </div>
+            <motion.img
+              src={selectedWallpaper.urls.regular}
+              alt={selectedWallpaper.alt_description || "Wallpaper"}
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="w-full top-0 h-full left-0 md:h-auto md:max-w-4xl object-contain cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setSelectedWallpaper(null)}
+              className="absolute top-5 right-5 md:top-10 md:right-10 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full"
+            >
+              <FaTimes size={26} />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
