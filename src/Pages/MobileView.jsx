@@ -39,65 +39,73 @@ const iconMap = {
   all: <FaTachometerAlt />,
 };
 
-const categories = [
-  { id: "all", name: "All Wallpapers" },
-  { id: "nature", name: "Nature" },
-  { id: "abstract", name: "Abstract" },
-  { id: "minimal", name: "Minimal" },
-  { id: "city", name: "City & Urban" },
-  { id: "space", name: "Space & Galaxy" },
-  { id: "animals", name: "Animals" },
-  { id: "cars", name: "Cars & Vehicles" },
-  { id: "sky", name: "Sky & Clouds" },
-  { id: "phone", name: "Phone Wallpapers" },
-  { id: "desktop", name: "Desktop Wallpapers" },
-  { id: "dark", name: "Dark Mode" },
-  { id: "light", name: "Light Mode" },
-  { id: "texture", name: "Textures" },
-  { id: "vintage", name: "Vintage" },
-];
-
 const WallpapersSection = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [wallpapers, setWallpapers] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedWallpaper, setSelectedWallpaper] = useState(null);
-  const [loadedImages, setLoadedImages] = useState({});
+  const [selectedWallpaper, setSelectedWallpaper] = useState(null); // modal state
 
-  // Build query for backend/Wallhaven
-  const buildQuery = (category) => {
-    if (category === "all") return "";
-    const queries = {
-      nature: "nature landscape forest mountain",
-      abstract: "abstract digital art",
-      minimal: "minimal simple",
-      city: "city urban architecture",
-      space: "space galaxy universe",
-      animals: "animals wildlife",
-      cars: "cars automotive supercars",
-      sky: "sky clouds",
-      phone: "mobile phone",
-      desktop: "desktop 4k",
-      dark: "dark black",
-      light: "light white bright",
-      texture: "texture pattern",
-      vintage: "vintage retro",
-    };
-    return queries[category] || category;
-  };
+  const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
-  // Fetch wallpapers from backend
-  const fetchWallpapers = async (category = "all", pageNum = 1) => {
+  const categories = [
+    { id: "all", name: "All Wallpapers" },
+    { id: "nature", name: "Nature" },
+    { id: "abstract", name: "Abstract" },
+    { id: "minimal", name: "Minimal" },
+    { id: "city", name: "City & Urban" },
+    { id: "space", name: "Space & Galaxy" },
+    { id: "animals", name: "Animals" },
+    { id: "cars", name: "Cars & Vehicles" },
+    { id: "sky", name: "Sky & Clouds" },
+    { id: "phone", name: "Phone Wallpapers" },
+    { id: "desktop", name: "Desktop Wallpapers" },
+    { id: "dark", name: "Dark Mode" },
+    { id: "light", name: "Light Mode" },
+    { id: "texture", name: "Textures" },
+    { id: "vintage", name: "Vintage" },
+  ];
+
+  useEffect(() => {
+    const container = document.getElementById("ad-container-300x250");
+    if (container) {
+      container.innerHTML = "";
+
+      const script = document.createElement("script");
+      script.innerHTML = `
+      atOptions = {
+        'key' : '6676d68ba7d23941b9617404b8afd159',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    `;
+      container.appendChild(script);
+
+      const script2 = document.createElement("script");
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.async = true;
+      container.appendChild(script2);
+    }
+  }, []);
+
+  const fetchWallpapers = async (category = "wallpapers", pageNum = 1) => {
     try {
       setIsLoading(true);
-      const query = buildQuery(category);
-      const url = `http://localhost:5000/api/wallpapers?category=${query}&page=${pageNum}`;
-      const res = await fetch(url);
+
+      const query = category === "all" ? "wallpapers" : category;
+
+      const res = await fetch(
+        `https://api.unsplash.com/photos/random?query=${encodeURIComponent(
+          query
+        )}&count=12&orientation=portrait&client_id=${accessKey}`
+      );
+
       const data = await res.json();
-      setWallpapers(data.data || []);
-      preloadNextPage(data.data || [], category, pageNum + 1);
+      setWallpapers(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching wallpapers:", err);
       setWallpapers([]);
@@ -106,65 +114,50 @@ const WallpapersSection = () => {
     }
   };
 
-  // Preload next page images
-  const preloadNextPage = async (currentData, category, nextPageNum) => {
-    try {
-      const query = buildQuery(category);
-      const url = `http://localhost:5000/api/wallpapers?category=${query}&page=${nextPageNum}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.data) {
-        data.data.forEach((wall) => {
-          const img = new Image();
-          img.src = wall.path; // preload 3K preview
-        });
-      }
-    } catch (err) {
-      console.warn("Preloading next page failed:", err);
-    }
-  };
-
   useEffect(() => {
     setPage(1);
-    fetchWallpapers(selectedCategory);
+    fetchWallpapers(
+      selectedCategory === "all" ? "wallpapers" : selectedCategory
+    );
   }, [selectedCategory]);
 
   const handleNext = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    fetchWallpapers(selectedCategory, nextPage);
+    window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
+    fetchWallpapers(
+      selectedCategory === "all" ? "wallpapers" : selectedCategory,
+      nextPage
+    );
   };
 
   const handlePrevious = () => {
     if (page > 1) {
       const prevPage = page - 1;
       setPage(prevPage);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      fetchWallpapers(selectedCategory, prevPage);
+      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top after fetch
+      fetchWallpapers(
+        selectedCategory === "all" ? "wallpapers" : selectedCategory,
+        prevPage
+      );
     }
   };
 
-  const handleImageLoad = (id) => {
-    setLoadedImages((prev) => ({ ...prev, [id]: true }));
-  };
-
-  const handleDownload = async (wallpaper) => {
+  const handleDownload = async (url, filename) => {
     try {
-      const imageUrl = wallpaper.path || wallpaper.url;
-      const response = await fetch(imageUrl);
+      const response = await fetch(url);
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
+
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.download = `wallpaper-${wallpaper.id}.jpg`;
+      link.download = filename || "wallpaper.jpg";
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      link.remove();
       window.URL.revokeObjectURL(blobUrl);
     } catch (err) {
       console.error("Download failed:", err);
-      window.open(wallpaper.path || wallpaper.url, "_blank");
     }
   };
 
@@ -174,34 +167,10 @@ const WallpapersSection = () => {
     hover: { scale: 1.05, y: -4 },
   };
 
-  // Ads script
-  useEffect(() => {
-    const container = document.getElementById("ad-container-300x250");
-    if (container) {
-      container.innerHTML = "";
-      const script = document.createElement("script");
-      script.innerHTML = `
-        atOptions = {
-          'key' : '6676d68ba7d23941b9617404b8afd159',
-          'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
-          'params' : {}
-        };
-      `;
-      container.appendChild(script);
-      const script2 = document.createElement("script");
-      script2.src =
-        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
-      script2.async = true;
-      container.appendChild(script2);
-    }
-  }, []);
-
   return (
     <section className="bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row gap-6">
-        {/* Sidebar */}
+        {/* Sidebar for md+ */}
         <div className="hidden md:flex flex-col w-64 flex-shrink-0 gap-3">
           <h3 className="text-xl font-bold mb-3">Categories</h3>
           {categories.map((cat) => (
@@ -224,7 +193,7 @@ const WallpapersSection = () => {
 
         {/* Main content */}
         <div className="flex-1">
-          {/* Mobile menu */}
+          {/* Mobile menu button */}
           <div className="md:hidden mb-6">
             <motion.button
               whileTap={{ scale: 0.97 }}
@@ -249,7 +218,7 @@ const WallpapersSection = () => {
               </span>
             </h2>
             <p className="text-gray-400 text-sm md:text-base">
-              Browse high-quality wallpapers with fast loading.
+              Browse high-quality wallpapers (9:16 portrait) for any device.
             </p>
           </motion.div>
 
@@ -265,7 +234,7 @@ const WallpapersSection = () => {
           ) : (
             <motion.div
               layout
-              className="columns-2 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
+              className="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
             >
               {wallpapers.map((wall) => (
                 <motion.div
@@ -274,40 +243,34 @@ const WallpapersSection = () => {
                   initial="hidden"
                   animate="visible"
                   whileHover="hover"
-                  className="break-inside-avoid group relative overflow-hidden rounded-2xl border border-white/10 bg-transparent backdrop-blur-xl hover:border-purple-400/40 transition-all duration-300 cursor-pointer"
-                  onClick={() => setSelectedWallpaper(wall)}
+                  className="break-inside-avoid group relative overflow-hidden rounded-2xl border border-white/10 bg-transparent backdrop-blur-xl hover:border-purple-400/40 transition-all duration-300"
                 >
                   <img
-                    src={wall.thumbs?.large || wall.path}
-                    alt={wall.tags?.[0]?.name || "Wallpaper"}
-                    className={`w-full h-auto object-cover rounded-2xl transition duration-500 ${
-                      loadedImages[wall.id]
-                        ? "opacity-100 blur-0"
-                        : "opacity-0 blur-xl"
-                    }`}
-                    loading="lazy"
-                    onLoad={() => handleImageLoad(wall.id)}
+                    src={wall.urls.small}
+                    alt={wall.alt_description || "Wallpaper"}
+                    className="w-full object-cover rounded-2xl group-hover:opacity-90 transition duration-300"
                   />
+
+                  {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition duration-300 p-2 flex flex-col justify-end">
                     <h4 className="text-xs font-semibold line-clamp-1">
-                      {wall.tags?.[0]?.name || "Wallpaper"}
+                      {wall.alt_description || "Untitled"}
                     </h4>
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedWallpaper(wall);
-                        }}
-                        className="bg-white text-black px-2 py-1 md:px-4 md:py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
+                    <div className="flex gap-2">
+                      <a
+                        href={wall.links.html}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition"
                       >
                         View
-                      </button>
+                      </a>
+
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDownload(wall);
-                        }}
-                        className="bg-purple-600 text-white px-2 py-1 md:px-4 md:py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
+                        onClick={() =>
+                          handleDownload(wall.urls.full, wall.id + ".jpg")
+                        }
+                        className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-purple-700 transition flex items-center gap-2"
                       >
                         <FaDownload size={14} /> Download
                       </button>
@@ -318,31 +281,28 @@ const WallpapersSection = () => {
             </motion.div>
           )}
 
-          {/* Ads */}
           <div className="my-6 flex justify-center">
             <div id="ad-container-300x250"></div>
           </div>
 
           {/* Pagination */}
-          {wallpapers.length > 0 && (
-            <div className="flex justify-between mt-6">
-              <button
-                onClick={handlePrevious}
-                disabled={page === 1}
-                className={`px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition ${
-                  page === 1 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                Previous
-              </button>
-              <button
-                onClick={handleNext}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition"
-              >
-                Next
-              </button>
-            </div>
-          )}
+          <div className="flex justify-between mt-6">
+            <button
+              onClick={handlePrevious}
+              disabled={page === 1}
+              className={`px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition ${
+                page === 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNext}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
 
@@ -399,40 +359,24 @@ const WallpapersSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black flex items-center justify-center p-0"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-lg p-0 md:p-10"
             onClick={() => setSelectedWallpaper(null)}
           >
+            <motion.img
+              src={selectedWallpaper.urls.regular}
+              alt={selectedWallpaper.alt_description || "Wallpaper"}
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="w-full top-0 h-full left-0 md:h-auto md:max-w-4xl object-contain cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            />
             <button
               onClick={() => setSelectedWallpaper(null)}
-              className="absolute top-4 right-4 z-10 text-white bg-black/50 hover:bg-black/70 p-3 rounded-full backdrop-blur-sm"
+              className="absolute top-5 right-5 md:top-10 md:right-10 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full"
             >
-              <FaTimes size={24} />
+              <FaTimes size={26} />
             </button>
-
-            <div className="absolute top-4 left-4 z-10 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm">
-              4K
-            </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDownload(selectedWallpaper);
-              }}
-              className="absolute bottom-4 right-4 z-10 bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700 transition flex items-center gap-2 backdrop-blur-sm"
-            >
-              <FaDownload size={16} /> Download
-            </button>
-
-            <motion.img
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              src={selectedWallpaper.path}
-              alt={selectedWallpaper.tags?.[0]?.name || "Wallpaper"}
-              className="w-full object-cover cursor-pointer"
-              onClick={(e) => e.stopPropagation()}
-              loading="lazy"
-            />
           </motion.div>
         )}
       </AnimatePresence>
