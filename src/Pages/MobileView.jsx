@@ -92,6 +92,26 @@ const WallpapersSection = () => {
     }
   };
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.innerHTML = `
+        atOptions = {
+          'key' : '6676d68ba7d23941b9617404b8afd159',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      `;
+    document.getElementById("ad-container-300x250").appendChild(script);
+
+    const script2 = document.createElement("script");
+    script2.src =
+      "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+    script2.async = true;
+    document.getElementById("ad-container-300x250").appendChild(script2);
+  }, []);
+
   // Load when category changes
   useEffect(() => {
     setPage(1);
@@ -115,27 +135,26 @@ const WallpapersSection = () => {
   };
 
   const handleDownload = async (url, filename) => {
-  try {
-    const response = await fetch(url, { mode: "cors" });
-    const blob = await response.blob();
+    try {
+      const response = await fetch(url, { mode: "cors" });
+      const blob = await response.blob();
 
-    const blobUrl = window.URL.createObjectURL(blob);
+      const blobUrl = window.URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = filename || "wallpaper.jpg"; // forces download
-    document.body.appendChild(link);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename || "wallpaper.jpg"; // forces download
+      document.body.appendChild(link);
 
-    link.click(); // triggers download
-    link.remove();
+      link.click(); // triggers download
+      link.remove();
 
-    // cleanup
-    window.URL.revokeObjectURL(blobUrl);
-  } catch (error) {
-    console.error("Download failed:", error);
-  }
-};
-
+      // cleanup
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -239,9 +258,7 @@ const WallpapersSection = () => {
                       </a>
 
                       <button
-                        onClick={() =>
-                          handleDownload()
-                        }
+                        onClick={() => handleDownload()}
                         className="bg-purple-600 px-4 py-2 rounded-full text-sm flex items-center gap-2"
                       >
                         <FaDownload size={14} /> Download
@@ -252,6 +269,10 @@ const WallpapersSection = () => {
               ))}
             </motion.div>
           )}
+
+          <div className="my-6 flex justify-center">
+            <div id="ad-container-300x250"></div>
+          </div>
 
           {/* Pagination */}
           <div className="flex justify-between mt-6">
