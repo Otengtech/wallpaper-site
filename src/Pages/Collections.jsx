@@ -240,7 +240,7 @@ const CollectionsSection = () => {
 
                           <button
                             onClick={() =>
-                              handleDownload(wall.urls.full, wall.id + ".jpg")
+                              handleDownload()
                             }
                             className="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-purple-700 transition flex items-center gap-1"
                           >
