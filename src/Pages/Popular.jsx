@@ -9,7 +9,12 @@ const Popular = () => {
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
   // Categories you want to fetch
-  const categories = ["fast super cars", "beautiful places", "abstract", "nature"];
+  const categories = [
+    "fast super cars",
+    "beautiful places",
+    "abstract",
+    "nature",
+  ];
 
   // Fetch wallpapers from Unsplash
   const fetchPopularWallpapers = async (pageNum = 1) => {
@@ -65,6 +70,26 @@ const Popular = () => {
     }
   };
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.innerHTML = `
+        atOptions = {
+          'key' : '6676d68ba7d23941b9617404b8afd159',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      `;
+    document.getElementById("ad-container-300x250").appendChild(script);
+
+    const script2 = document.createElement("script");
+    script2.src =
+      "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+    script2.async = true;
+    document.getElementById("ad-container-300x250").appendChild(script2);
+  }, []);
+
   return (
     <section className="py-20 bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -79,9 +104,14 @@ const Popular = () => {
             Most <span className="text-purple-500">Popular</span> Wallpapers
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Explore the most beautiful wallpapers of fast cars, nature, abstract art, and stunning places.
+            Explore the most beautiful wallpapers of fast cars, nature, abstract
+            art, and stunning places.
           </p>
         </motion.div>
+
+        <div className="my-6 flex justify-center">
+          <div id="ad-container-300x250"></div>
+        </div>
 
         {/* Wallpapers Grid */}
         {isLoading ? (
@@ -121,12 +151,12 @@ const Popular = () => {
                     </h4>
 
                     <div className="flex gap-2">
-                     <button
-                            onClick={() => setSelectedWallpaper(wall)}
-                            className="bg-white text-black px-3 md:px-4 py-2 rounded-full text-xs hover:bg-gray-200 transition"
-                          >
-                            View
-                          </button>
+                      <button
+                        onClick={() => setSelectedWallpaper(wall)}
+                        className="bg-white text-black px-3 md:px-4 py-2 rounded-full text-xs hover:bg-gray-200 transition"
+                      >
+                        View
+                      </button>
 
                       <button
                         onClick={() =>
