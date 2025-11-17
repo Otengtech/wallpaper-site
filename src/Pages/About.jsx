@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  FaHeart, 
-  FaRocket, 
-  FaUsers, 
-  FaPalette, 
-  FaAward, 
+import {
+  FaHeart,
+  FaRocket,
+  FaUsers,
+  FaPalette,
+  FaAward,
   FaGlobe,
   FaGithub,
   FaTwitter,
@@ -15,7 +15,7 @@ import {
   FaStar,
   FaDownload,
   FaMobileAlt,
-  FaDesktop
+  FaDesktop,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -25,87 +25,97 @@ const AboutUs = () => {
       id: 1,
       name: "Sarah Chen",
       role: "Founder & Creative Director",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+      image:
+        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
       bio: "Passionate about digital art and user experience. Former UI/UX designer at TechCorp.",
-      social: { twitter: "#", linkedin: "#", github: "#" }
+      social: { twitter: "#", linkedin: "#", github: "#" },
     },
     {
       id: 2,
       name: "Marcus Rodriguez",
       role: "Lead Developer",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+      image:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
       bio: "Full-stack developer with 8+ years experience. Loves creating seamless digital experiences.",
-      social: { twitter: "#", linkedin: "#", github: "#" }
+      social: { twitter: "#", linkedin: "#", github: "#" },
     },
     {
       id: 3,
       name: "Aisha Patel",
       role: "Content Curator",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face",
+      image:
+        "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face",
       bio: "Digital artist and photographer. Curates the most stunning visuals for our collection.",
-      social: { twitter: "#", linkedin: "#", instagram: "#" }
+      social: { twitter: "#", linkedin: "#", instagram: "#" },
     },
     {
       id: 4,
       name: "David Kim",
       role: "Community Manager",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+      image:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
       bio: "Builds and nurtures our amazing community. Always listening to your feedback.",
-      social: { twitter: "#", linkedin: "#", github: "#" }
-    }
+      social: { twitter: "#", linkedin: "#", github: "#" },
+    },
   ];
 
   const stats = [
     { number: "50K+", label: "Happy Users", icon: <FaUsers /> },
     { number: "10K+", label: "Wallpapers", icon: <FaPalette /> },
     { number: "150+", label: "Countries", icon: <FaGlobe /> },
-    { number: "4.9", label: "Rating", icon: <FaStar /> }
+    { number: "4.9", label: "Rating", icon: <FaStar /> },
   ];
 
   const values = [
     {
       icon: <FaHeart />,
       title: "Passion for Quality",
-      description: "Every wallpaper is carefully curated and optimized for the best visual experience."
+      description:
+        "Every wallpaper is carefully curated and optimized for the best visual experience.",
     },
     {
       icon: <FaRocket />,
       title: "Innovation",
-      description: "We constantly explore new styles and technologies to enhance your experience."
+      description:
+        "We constantly explore new styles and technologies to enhance your experience.",
     },
     {
       icon: <FaUsers />,
       title: "Community First",
-      description: "Our community's feedback drives our decisions and improvements."
+      description:
+        "Our community's feedback drives our decisions and improvements.",
     },
     {
       icon: <FaAward />,
       title: "Excellence",
-      description: "We strive for excellence in every aspect of our platform and service."
-    }
+      description:
+        "We strive for excellence in every aspect of our platform and service.",
+    },
   ];
 
   const features = [
     {
       icon: <FaDownload />,
       title: "Free Downloads",
-      description: "All wallpapers are completely free to download and use."
+      description: "All wallpapers are completely free to download and use.",
     },
     {
       icon: <FaMobileAlt />,
       title: "Mobile Optimized",
-      description: "Perfectly sized for all mobile devices and screen resolutions."
+      description:
+        "Perfectly sized for all mobile devices and screen resolutions.",
     },
     {
       icon: <FaDesktop />,
       title: "HD Quality",
-      description: "High-resolution wallpapers that look stunning on any display."
+      description:
+        "High-resolution wallpapers that look stunning on any display.",
     },
     {
       icon: <FaPalette />,
       title: "Daily Updates",
-      description: "Fresh content added daily to keep your device looking new."
-    }
+      description: "Fresh content added daily to keep your device looking new.",
+    },
   ];
 
   const containerVariants = {
@@ -113,9 +123,9 @@ const AboutUs = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2
-      }
-    }
+        staggerChildren: 0.2,
+      },
+    },
   };
 
   const itemVariants = {
@@ -125,9 +135,9 @@ const AboutUs = () => {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
   const cardVariants = {
@@ -136,17 +146,42 @@ const AboutUs = () => {
       opacity: 1,
       scale: 1,
       transition: {
-        duration: 0.5
-      }
+        duration: 0.5,
+      },
     },
     hover: {
       scale: 1.05,
       y: -5,
       transition: {
-        duration: 0.3
-      }
-    }
+        duration: 0.3,
+      },
+    },
   };
+
+  useEffect(() => {
+    const container = document.getElementById("ad-container-300x250");
+    if (container) {
+      container.innerHTML = "";
+
+      const script = document.createElement("script");
+      script.innerHTML = `
+        atOptions = {
+          'key' : '6676d68ba7d23941b9617404b8afd159',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      `;
+      container.appendChild(script);
+
+      const script2 = document.createElement("script");
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.async = true;
+      container.appendChild(script2);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 text-white">
@@ -156,7 +191,7 @@ const AboutUs = () => {
           <div className="absolute top-10 left-10 w-72 h-72 bg-purple-500 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -171,12 +206,16 @@ const AboutUs = () => {
               </span>
             </h1>
             <p className="text-md text-left md:text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              We're passionate about bringing stunning visuals to your devices. 
-              Our mission is to make every screen beautiful, one wallpaper at a time.
+              We're passionate about bringing stunning visuals to your devices.
+              Our mission is to make every screen beautiful, one wallpaper at a
+              time.
             </p>
           </motion.div>
         </div>
       </section>
+      <div className="my-6 flex justify-center">
+        <div id="ad-container-300x250"></div>
+      </div>
 
       {/* Story Section */}
       <section className="py-20">
@@ -194,19 +233,21 @@ const AboutUs = () => {
               </h2>
               <div className="space-y-4 text-left text-gray-300 text-md leading-relaxed">
                 <p>
-                  Founded in 2025, WallHub started as a simple passion project between 
-                  a group of designers and developers who believed that everyone deserves 
-                  access to beautiful, high-quality wallpapers.
+                  Founded in 2025, WallHub started as a simple passion project
+                  between a group of designers and developers who believed that
+                  everyone deserves access to beautiful, high-quality
+                  wallpapers.
                 </p>
                 <p>
-                  What began as a small collection of curated images has grown into a 
-                  thriving community of over 50,000 users worldwide. We're committed to 
-                  providing free, stunning wallpapers that inspire creativity and bring 
-                  joy to everyday device usage.
+                  What began as a small collection of curated images has grown
+                  into a thriving community of over 50,000 users worldwide.
+                  We're committed to providing free, stunning wallpapers that
+                  inspire creativity and bring joy to everyday device usage.
                 </p>
               </div>
-              
-              <Link to="/collections"
+
+              <Link
+                to="/collections"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="mt-8 bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-4 rounded-full font-semibold flex items-center space-x-2 hover:shadow-2xl transition-all duration-300"
@@ -272,9 +313,7 @@ const AboutUs = () => {
                   <div className="text-4xl font-bold text-white mb-2">
                     {stat.number}
                   </div>
-                  <div className="text-gray-400 font-medium">
-                    {stat.label}
-                  </div>
+                  <div className="text-gray-400 font-medium">{stat.label}</div>
                 </div>
               </motion.div>
             ))}
