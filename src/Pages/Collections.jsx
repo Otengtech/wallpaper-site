@@ -58,31 +58,6 @@ const CollectionsSection = () => {
 
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
-   useEffect(() => {
-    const container = document.getElementById("ad-container-300x250");
-    if (container) {
-      container.innerHTML = "";
-
-      const script = document.createElement("script");
-      script.innerHTML = `
-      atOptions = {
-        'key' : '6676d68ba7d23941b9617404b8afd159',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-      };
-    `;
-      container.appendChild(script);
-
-      const script2 = document.createElement("script");
-      script2.src =
-        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
-      script2.async = true;
-      container.appendChild(script2);
-    }
-  }, []);
-
   const categories = [
     { id: "all", name: "All Wallpapers" },
     { id: "nature", name: "Nature" },
@@ -152,6 +127,31 @@ const CollectionsSection = () => {
     visible: { opacity: 1, scale: 1, transition: { duration: 0.4 } },
     hover: { scale: 1.04, y: -6 },
   };
+
+  useEffect(() => {
+    const container = document.getElementById("ad-container-300x250");
+    if (container) {
+      container.innerHTML = "";
+
+      const script = document.createElement("script");
+      script.innerHTML = `
+      atOptions = {
+        'key' : '6676d68ba7d23941b9617404b8afd159',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    `;
+      container.appendChild(script);
+
+      const script2 = document.createElement("script");
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.async = true;
+      container.appendChild(script2);
+    }
+  }, []);
 
   return (
     <section className="relative min-h-screen bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white overflow-hidden">
@@ -239,9 +239,7 @@ const CollectionsSection = () => {
                           </button>
 
                           <button
-                            onClick={() =>
-                              handleDownload()
-                            }
+                            onClick={() => handleDownload()}
                             className="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold hover:bg-purple-700 transition flex items-center gap-1"
                           >
                             <FaDownload size={12} />
@@ -253,8 +251,8 @@ const CollectionsSection = () => {
                 </motion.div>
 
                 <div className="my-6 flex justify-center">
-            <div id="ad-container-300x250"></div>
-          </div>
+                  <div id="ad-container-300x250"></div>
+                </div>
 
                 {/* Refresh */}
                 <div className="flex justify-center mt-10">
@@ -262,7 +260,7 @@ const CollectionsSection = () => {
                     onClick={() => fetchWallpapers(selectedCategory)}
                     className="px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white"
                   >
-                  More Images
+                    More Images
                   </button>
                 </div>
               </>
