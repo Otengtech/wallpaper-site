@@ -67,9 +67,7 @@ const WallpapersSection = () => {
     { id: "vintage", name: "Vintage" },
   ];
 
-  // -----------------------------
-  //   FETCH WALLPAPERS (FIXED)
-  // -----------------------------
+  // Fixed fetch function
   const fetchWallpapers = async (category, pg = 1) => {
     try {
       setIsLoading(true);
@@ -81,6 +79,10 @@ const WallpapersSection = () => {
           query
         )}&count=12&orientation=portrait&client_id=${accessKey}`
       );
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
 
       const data = await res.json();
       setWallpapers(Array.isArray(data) ? data : []);
@@ -103,13 +105,17 @@ const WallpapersSection = () => {
           'params' : {}
         };
       `;
-    document.getElementById("ad-container-300x250").appendChild(script);
+    
+    const container = document.getElementById("ad-container-300x250");
+    if (container) {
+      container.appendChild(script);
 
-    const script2 = document.createElement("script");
-    script2.src =
-      "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
-    script2.async = true;
-    document.getElementById("ad-container-300x250").appendChild(script2);
+      const script2 = document.createElement("script");
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.async = true;
+      container.appendChild(script2);
+    }
   }, []);
 
   // Load when category changes
@@ -134,25 +140,25 @@ const WallpapersSection = () => {
     }
   };
 
+  // Fixed download function
   const handleDownload = async (url, filename) => {
     try {
-      const response = await fetch(url, { mode: "cors" });
+      const response = await fetch(url);
       const blob = await response.blob();
-
       const blobUrl = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.download = filename || "wallpaper.jpg"; // forces download
+      link.download = filename || "wallpaper.jpg";
       document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-      link.click(); // triggers download
-      link.remove();
-
-      // cleanup
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error("Download failed:", error);
+      // Fallback: open in new tab
+      window.open(url, '_blank');
     }
   };
 
@@ -161,6 +167,27 @@ const WallpapersSection = () => {
     visible: { opacity: 1, scale: 1, transition: { duration: 0.4 } },
     hover: { scale: 1.05, y: -4 },
   };
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedWallpaper(null);
+      }
+    };
+
+    if (selectedWallpaper) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedWallpaper]);
 
   return (
     <section className="bg-gradient-to-b from-gray-900 via-gray-950 to-black text-white min-h-screen py-8">
@@ -225,7 +252,12 @@ const WallpapersSection = () => {
               />
             </div>
           ) : (
-            <motion.div className="columns-2 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6">
+            <motion.div 
+              className="columns-2 sm:columns-2 md:columns-3 xl:columns-4 gap-6 space-y-6"
+              initial="hidden"
+              animate="visible"
+              variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+            >
               {wallpapers.map((wall) => (
                 <motion.div
                   key={wall.id}
@@ -244,23 +276,27 @@ const WallpapersSection = () => {
 
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition p-2 flex flex-col justify-end">
-                    <h4 className="text-xs font-semibold line-clamp-1">
+                    <h4 className="text-xs font-semibold line-clamp-1 mb-2">
                       {wall.alt_description || "Untitled"}
                     </h4>
 
-                    <div className="flex gap-2 mt-1">
-                      <a
+                    <div className="flex gap-2">
+                      <button
                         onClick={() => setSelectedWallpaper(wall)}
-                        className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold"
+                        className="bg-white text-black px-3 py-2 rounded-full text-xs hover:bg-gray-200 transition"
                       >
                         View
-                      </a>
+                      </button>
 
                       <button
-                        onClick={() => handleDownload()}
-                        className="bg-purple-600 px-4 py-2 rounded-full text-sm flex items-center gap-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownload(wall.urls.full, `${wall.id}.jpg`);
+                        }}
+                        className="bg-purple-600 text-white px-3 py-2 rounded-full text-xs flex items-center gap-1 hover:bg-purple-700 transition"
                       >
-                        <FaDownload size={14} /> Download
+                        <FaDownload size={12} /> 
+                        <span>Download</span>
                       </button>
                     </div>
                   </div>
@@ -278,7 +314,7 @@ const WallpapersSection = () => {
             <button
               onClick={handlePrevious}
               disabled={page === 1}
-              className={`px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 ${
+              className={`px-6 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition ${
                 page === 1 ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -287,7 +323,7 @@ const WallpapersSection = () => {
 
             <button
               onClick={handleNext}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+              className="px-6 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition"
             >
               Next
             </button>
@@ -302,16 +338,20 @@ const WallpapersSection = () => {
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
-            className="fixed inset-0 bg-black/90 p-6 z-50"
+            transition={{ type: "spring", damping: 25 }}
+            className="fixed inset-0 bg-black/95 p-6 z-50 md:hidden"
           >
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold">Categories</h3>
-              <button onClick={() => setIsMenuOpen(false)}>
+              <button 
+                onClick={() => setIsMenuOpen(false)}
+                className="p-2 hover:bg-white/10 rounded-full transition"
+              >
                 <FaTimes size={20} />
               </button>
             </div>
 
-            <div className="mt-6 space-y-3">
+            <div className="space-y-3">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
@@ -319,14 +359,14 @@ const WallpapersSection = () => {
                     setSelectedCategory(cat.id);
                     setIsMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 p-4 rounded-xl ${
+                  className={`w-full flex items-center gap-3 p-4 rounded-xl transition ${
                     selectedCategory === cat.id
                       ? "bg-purple-600/30 border border-purple-500/40"
-                      : "bg-white/5 text-gray-300"
+                      : "bg-white/5 text-gray-300 hover:bg-white/10"
                   }`}
                 >
                   <span className="text-xl">{iconMap[cat.id]}</span>
-                  {cat.name}
+                  <span className="font-medium">{cat.name}</span>
                 </button>
               ))}
             </div>
@@ -341,25 +381,53 @@ const WallpapersSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedWallpaper(null)}
           >
-            <motion.img
-              src={selectedWallpaper.urls.regular}
-              alt="Wallpaper"
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="max-h-full max-w-full object-contain"
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-4xl max-h-[90vh] w-full"
               onClick={(e) => e.stopPropagation()}
-            />
-
-            <button
-              onClick={() => setSelectedWallpaper(null)}
-              className="absolute top-6 right-6 bg-black/40 p-2 rounded-full"
             >
-              <FaTimes size={26} />
-            </button>
+              <img
+                src={selectedWallpaper.urls.regular}
+                alt={selectedWallpaper.alt_description || "Wallpaper"}
+                className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+              />
+
+              {/* Download button in modal */}
+              <div className="absolute bottom-4 right-4">
+                <button
+                  onClick={() => handleDownload(selectedWallpaper.urls.full, `${selectedWallpaper.id}.jpg`)}
+                  className="bg-purple-600 text-white px-6 py-3 rounded-full hover:bg-purple-700 transition flex items-center gap-2 font-semibold"
+                >
+                  <FaDownload size={16} />
+                  Download
+                </button>
+              </div>
+
+              {/* Close button */}
+              <button
+                onClick={() => setSelectedWallpaper(null)}
+                className="absolute top-4 right-4 text-white bg-black/60 hover:bg-black/80 p-3 rounded-full transition-colors"
+              >
+                <FaTimes size={20} />
+              </button>
+
+              {/* Image info */}
+              <div className="absolute bottom-4 left-4 bg-black/60 text-white p-3 rounded-lg max-w-md">
+                <p className="text-sm font-medium">
+                  {selectedWallpaper.alt_description || "Beautiful wallpaper"}
+                </p>
+                {selectedWallpaper.user?.name && (
+                  <p className="text-xs text-gray-300 mt-1">
+                    by {selectedWallpaper.user.name}
+                  </p>
+                )}
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

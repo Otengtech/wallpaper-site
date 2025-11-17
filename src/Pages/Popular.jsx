@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaTimes } from "react-icons/fa";
 
 const Popular = () => {
   const [wallpapers, setWallpapers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1); // current page
-  const [selectedWallpaper, setSelectedWallpaper] = useState(null); // modal state
+  const [page, setPage] = useState(1);
+  const [selectedWallpaper, setSelectedWallpaper] = useState(null);
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
-  // Categories you want to fetch
   const categories = [
     "fast super cars",
     "beautiful places",
@@ -17,12 +16,10 @@ const Popular = () => {
     "nature",
   ];
 
-  // Fetch wallpapers from Unsplash
   const fetchPopularWallpapers = async (pageNum = 1) => {
     try {
       setIsLoading(true);
 
-      // Fetch all categories in parallel
       const promises = categories.map((category) =>
         fetch(
           `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
@@ -32,8 +29,6 @@ const Popular = () => {
       );
 
       const results = await Promise.all(promises);
-
-      // Combine results from all categories
       const combinedWallpapers = results.flatMap((res) => res.results || []);
       setWallpapers(combinedWallpapers);
 
@@ -55,7 +50,6 @@ const Popular = () => {
     hover: { scale: 1.05, y: -5 },
   };
 
-  // Download function
   const handleDownload = async (url, name) => {
     try {
       const res = await fetch(url);
@@ -70,6 +64,27 @@ const Popular = () => {
       console.error("Error downloading image:", err);
     }
   };
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedWallpaper(null);
+      }
+    };
+
+    if (selectedWallpaper) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedWallpaper]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -192,34 +207,62 @@ const Popular = () => {
           </>
         )}
       </div>
+
       {/* Wallpaper Modal */}
-            <section>
-              {selectedWallpaper && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-50 h-[100vh] flex items-center justify-center bg-black/90 backdrop-blur-lg p-0 md:p-10"
-                  onClick={() => setSelectedWallpaper(null)}
-                >
-                  <motion.img
-                    src={selectedWallpaper.urls.regular}
-                    alt={selectedWallpaper.alt_description || "Wallpaper"}
-                    initial={{ scale: 0.95 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0.95 }}
-                    className="w-full top-0 h-full left-0 md:h-auto md:max-w-4xl object-contain cursor-pointer"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <button
-                    onClick={() => setSelectedWallpaper(null)}
-                    className="absolute top-5 right-5 md:top-10 md:right-10 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full"
-                  >
-                    <FaTimes size={26} />
-                  </button>
-                </motion.div>
+      {selectedWallpaper && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-lg p-4"
+          onClick={() => setSelectedWallpaper(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            className="relative max-w-6xl max-h-[90vh] w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={selectedWallpaper.urls.regular}
+              alt={selectedWallpaper.alt_description || "Wallpaper"}
+              className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+            />
+            
+            {/* Download button in modal */}
+            <div className="absolute bottom-4 right-4 flex gap-2">
+              <button
+                onClick={() => handleDownload(selectedWallpaper.urls.full, selectedWallpaper.id + ".jpg")}
+                className="bg-purple-600 text-white px-6 py-3 rounded-full hover:bg-purple-700 transition flex items-center gap-2 font-semibold"
+              >
+                <FaDownload size={16} />
+                Download
+              </button>
+            </div>
+
+            {/* Close button */}
+            <button
+              onClick={() => setSelectedWallpaper(null)}
+              className="absolute top-4 right-4 text-white bg-black/60 hover:bg-black/80 p-3 rounded-full transition-colors"
+            >
+              <FaTimes size={20} />
+            </button>
+
+            {/* Image info */}
+            <div className="absolute bottom-4 left-4 bg-black/60 text-white p-3 rounded-lg max-w-md">
+              <p className="text-sm font-medium">
+                {selectedWallpaper.alt_description || "Beautiful wallpaper"}
+              </p>
+              {selectedWallpaper.user?.name && (
+                <p className="text-xs text-gray-300 mt-1">
+                  by {selectedWallpaper.user.name}
+                </p>
               )}
-            </section>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </section>
   );
 };

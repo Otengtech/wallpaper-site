@@ -212,24 +212,34 @@ const CategoriesSection = () => {
     },
   };
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.innerHTML = `
-      atOptions = {
-        'key' : '6676d68ba7d23941b9617404b8afd159',
-        'format' : 'iframe',
-        'height' : 250,
-        'width' : 300,
-        'params' : {}
-      };
-    `;
-    document.getElementById("ad-container-300x250").appendChild(script);
+  const handleCategoryClick = (categoryId) => {
+    // Handle category click - you can add navigation logic here
+    console.log(`Category clicked: ${categoryId}`);
+    // Example: navigate to collections with filter
+    // navigate(`/collections?category=${categoryId}`);
+  };
 
-    const script2 = document.createElement("script");
-    script2.src =
-      "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
-    script2.async = true;
-    document.getElementById("ad-container-300x250").appendChild(script2);
+  useEffect(() => {
+    const container = document.getElementById("ad-container-300x250");
+    if (container) {
+      const script = document.createElement("script");
+      script.innerHTML = `
+        atOptions = {
+          'key' : '6676d68ba7d23941b9617404b8afd159',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      `;
+      container.appendChild(script);
+
+      const script2 = document.createElement("script");
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.async = true;
+      container.appendChild(script2);
+    }
   }, []);
 
   return (
@@ -242,8 +252,6 @@ const CategoriesSection = () => {
         <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-cyan-500 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
-
-      
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
@@ -264,9 +272,10 @@ const CategoriesSection = () => {
             perfect background that matches your personality.
           </p>
         </motion.div>
+        
         <div className="my-6 flex justify-center">
-        <div id="ad-container-300x250"></div>
-      </div>
+          <div id="ad-container-300x250"></div>
+        </div>
 
         {/* Popular Categories */}
         <motion.div
@@ -294,6 +303,7 @@ const CategoriesSection = () => {
                 animate="visible"
                 whileHover="hover"
                 className="group relative bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 cursor-pointer overflow-hidden"
+                onClick={() => handleCategoryClick(category.id)}
               >
                 {/* Gradient Background */}
                 <div
@@ -301,13 +311,17 @@ const CategoriesSection = () => {
                 />
 
                 {/* Icon */}
-                <Link href={category.to}>
-                <div
-                  className={`${category.bgColor} w-16 h-16 rounded-2xl text-purple-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform duration-300`}
+                <Link 
+                  to={category.to} 
+                  className="block"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {category.icon}
-                </div>
-              </Link>
+                  <div
+                    className={`${category.bgColor} w-16 h-16 rounded-2xl text-purple-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    {category.icon}
+                  </div>
+                </Link>
 
                 {/* Content */}
                 <h4 className="text-white font-semibold text-lg mb-2">
@@ -319,8 +333,9 @@ const CategoriesSection = () => {
 
                 {/* Footer */}
                 <Link
-                  to="/collections"
+                  to={category.to}
                   className="flex items-center justify-between"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <span className="text-purple-400 text-sm font-medium">
                     {category.count} wallpapers
@@ -353,6 +368,7 @@ const CategoriesSection = () => {
               variants={itemVariants}
               whileHover="hover"
               className="group relative bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 cursor-pointer overflow-hidden"
+              onClick={() => handleCategoryClick(category.id)}
             >
               {/* Background Pattern */}
               <div className="absolute inset-0 opacity-5">
@@ -361,11 +377,17 @@ const CategoriesSection = () => {
               </div>
 
               {/* Icon */}
-              <div
-                className={`${category.bgColor} w-14 h-14 rounded-xl text-sky-500 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform duration-300 relative z-10`}
+              <Link 
+                to={category.to}
+                className="block"
+                onClick={(e) => e.stopPropagation()}
               >
-                {category.icon}
-              </div>
+                <div
+                  className={`${category.bgColor} w-14 h-14 rounded-xl text-sky-500 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform duration-300 relative z-10`}
+                >
+                  {category.icon}
+                </div>
+              </Link>
 
               {/* Content */}
               <h4 className="text-white font-semibold mb-2 relative z-10">
@@ -409,14 +431,15 @@ const CategoriesSection = () => {
               Browse our complete collection or use advanced search to find the
               perfect wallpaper.
             </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleCategoryClick("all")}
-              className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-4 rounded-full font-semibold hover:shadow-2xl transition-all duration-300"
-            >
-              Explore All Wallpapers
-            </motion.button>
+            <Link to="/collections">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-4 rounded-full font-semibold hover:shadow-2xl transition-all duration-300"
+              >
+                Explore All Wallpapers
+              </motion.button>
+            </Link>
           </div>
         </motion.div>
       </div>
