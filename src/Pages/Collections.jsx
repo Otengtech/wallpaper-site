@@ -248,11 +248,10 @@ const CollectionsSection = () => {
                       </div>
                     </motion.div>
                   ))}
-                </motion.div>
-
-                <div className="my-6 flex justify-center">
+                  <div className="my-6 flex justify-center">
                   <div id="ad-container-300x250"></div>
                 </div>
+                </motion.div>
 
                 {/* Refresh */}
                 <div className="flex justify-center mt-10">

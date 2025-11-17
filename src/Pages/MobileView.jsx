@@ -250,8 +250,7 @@ const WallpapersSection = () => {
 
                     <div className="flex gap-2 mt-1">
                       <a
-                        href={wall.links.html}
-                        target="_blank"
+                        onClick={() => setSelectedWallpaper(wall)}
                         className="bg-white text-black px-4 py-2 rounded-full text-sm font-semibold"
                       >
                         View
