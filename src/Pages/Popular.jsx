@@ -193,7 +193,7 @@ const Popular = () => {
         )}
       </div>
       {/* Wallpaper Modal */}
-            <AnimatePresence>
+            <section>
               {selectedWallpaper && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -219,7 +219,7 @@ const Popular = () => {
                   </button>
                 </motion.div>
               )}
-            </AnimatePresence>
+            </section>
     </section>
   );
 };
