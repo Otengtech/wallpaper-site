@@ -6,6 +6,7 @@ const Popular = () => {
   const [wallpapers, setWallpapers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1); // current page
+  const [selectedWallpaper, setSelectedWallpaper] = useState(null); // modal state
   const accessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY;
 
   // Categories you want to fetch
@@ -191,6 +192,34 @@ const Popular = () => {
           </>
         )}
       </div>
+      {/* Wallpaper Modal */}
+            <AnimatePresence>
+              {selectedWallpaper && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-50 h-[100vh] flex items-center justify-center bg-black/90 backdrop-blur-lg p-0 md:p-10"
+                  onClick={() => setSelectedWallpaper(null)}
+                >
+                  <motion.img
+                    src={selectedWallpaper.urls.regular}
+                    alt={selectedWallpaper.alt_description || "Wallpaper"}
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0.95 }}
+                    className="w-full top-0 h-full left-0 md:h-auto md:max-w-4xl object-contain cursor-pointer"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <button
+                    onClick={() => setSelectedWallpaper(null)}
+                    className="absolute top-5 right-5 md:top-10 md:right-10 text-white bg-black/40 hover:bg-black/60 p-2 rounded-full"
+                  >
+                    <FaTimes size={26} />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
     </section>
   );
 };
